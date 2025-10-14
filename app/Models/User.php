@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'faculty_id',
+        'program_study_id',
+
     ];
 
     /**
@@ -44,5 +48,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function faculty(): BelongsTo
+    {
+        return $this->belongsTo(Faculty::class);
+    }
+
+    public function programStudy(): BelongsTo
+    {
+        return $this->belongsTo(ProgramStudy::class);
+    }
+
+    /**
+     * Relasi ke Document Checks
+     */
+    public function documentChecks()
+    {
+        return $this->hasMany(DocumentCheck::class);
     }
 }

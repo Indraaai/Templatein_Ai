@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('type'); // Jenis template: 'skripsi', 'proposal', 'laporan', 'artikel', dll
             $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('program_study_id')->nullable()->constrained()->onDelete('cascade');
             $table->json('rules'); // Menyimpan aturan dalam format JSON
