@@ -13,8 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Panggil AdminSeeder
+        // Seed in correct order: Faculty → ProgramStudy → Admin
         $this->call([
+            FacultySeeder::class,
+            ProgramStudySeeder::class,
             AdminSeeder::class,
         ]);
     }

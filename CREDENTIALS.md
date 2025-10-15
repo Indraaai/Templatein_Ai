@@ -13,11 +13,82 @@ Status   : ✅ Email Verified
 
 **Login URL:**
 
--   Web: `http://localhost/login`
--   API: `POST /api/login`
+-   Web: `http://localhost:8000/login`
+-   After Login: `http://localhost:8000/admin/dashboard`
 
-**Created By:** AdminSeeder
+**Created By:** AdminSeeder  
 **File:** `database/seeders/AdminSeeder.php`
+
+---
+
+## 👨‍🎓 Student Registration
+
+### How to Create Student Account
+
+1. **Visit Registration Page:**
+
+    ```
+    http://localhost:8000/register
+    ```
+
+2. **Fill Form:**
+
+    - Name: Your Name
+    - Email: your.email@student.test
+    - Fakultas: Select from dropdown (5 options)
+    - Program Studi: Auto-loaded via AJAX based on faculty
+    - Password: Min 8 characters
+    - Confirm Password: Same as password
+
+3. **After Registration:**
+    - Role automatically set to `'mahasiswa'`
+    - Auto login
+    - Redirect to: `http://localhost:8000/student/dashboard`
+
+### Example Student Account
+
+```
+Name     : Budi Santoso
+Email    : budi@student.test
+Password : student123
+Faculty  : Fakultas Teknik
+Prodi    : Teknik Informatika
+Role     : mahasiswa
+```
+
+---
+
+## 🏫 Available Faculties & Program Studies
+
+### Fakultas Teknik (ID: 1)
+
+-   Teknik Informatika
+-   Sistem Informasi
+-   Teknik Elektro
+-   Teknik Sipil
+
+### Fakultas Ekonomi dan Bisnis (ID: 2)
+
+-   Manajemen
+-   Akuntansi
+-   Ekonomi Pembangunan
+
+### Fakultas MIPA (ID: 3)
+
+-   Matematika
+-   Fisika
+-   Kimia
+-   Biologi
+
+### Fakultas Ilmu Sosial dan Politik (ID: 4)
+
+-   Ilmu Komunikasi
+-   Ilmu Pemerintahan
+-   Sosiologi
+
+### Fakultas Hukum (ID: 5)
+
+-   Ilmu Hukum
 
 ---
 
@@ -41,12 +112,6 @@ Example: Adm!n2025@TempLate#Sys
 - Angka
 - Simbol khusus
 ```
-
----
-
-## 🎭 Test Accounts (Coming Soon)
-
-### Student Accounts
 
 ```
 # Teknik Informatika
