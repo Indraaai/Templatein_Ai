@@ -22,6 +22,10 @@ Route::get('/dashboard', function () {
 // Admin routes
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Academic Management
+    Route::resource('faculties', \App\Http\Controllers\Admin\FacultyController::class);
+    Route::resource('program-studies', \App\Http\Controllers\Admin\ProgramStudyController::class);
 });
 
 // Student routes

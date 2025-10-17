@@ -22,4 +22,9 @@ class Faculty extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function templates(): HasMany
+    {
+        return $this->hasMany(Template::class);
+    }
 }
