@@ -1,4 +1,5 @@
 import './bootstrap';
+import './rules-builder';
 
 import Alpine from 'alpinejs';
 

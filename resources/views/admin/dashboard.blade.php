@@ -75,16 +75,16 @@
                             </div>
                         </a>
 
-                        <a href="#"
+                        <a href="{{ route('admin.templates.index') }}"
                             class="block p-4 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition">
-                            <div class="font-semibold text-green-600 dark:text-green-400">� Kelola Template</div>
+                            <div class="font-semibold text-green-600 dark:text-green-400">📄 Kelola Template</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Tambah, edit, atau hapus template
                                 dokumen</div>
                         </a>
 
-                        <a href="#"
+                        <a href="{{ route('admin.students.index') }}"
                             class="block p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition">
-                            <div class="font-semibold text-purple-600 dark:text-purple-400">� Kelola Mahasiswa</div>
+                            <div class="font-semibold text-purple-600 dark:text-purple-400">👥 Kelola Mahasiswa</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Lihat dan kelola data mahasiswa
                             </div>
                         </a>

@@ -12,18 +12,19 @@ class Template extends Model
     protected $fillable = [
         'name',
         'type',
+        'description',
         'faculty_id',
         'program_study_id',
-        'rules',
-        'description',
-        'file_path',
+        'template_rules',
+        'template_file',
         'is_active',
         'download_count',
     ];
 
     protected $casts = [
-        'rules' => 'array',
+        'template_rules' => 'array',
         'is_active' => 'boolean',
+        'download_count' => 'integer',
     ];
 
     /**

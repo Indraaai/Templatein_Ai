@@ -14,10 +14,14 @@ return new class extends Migration
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type'); // Jenis template: 'skripsi', 'proposal', 'laporan', 'artikel', dll
+            $table->string('type'); // Jenis template: 'skripsi', 'proposal', 'tugas_akhir', dll
+            $table->text('description')->nullable();
             $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('program_study_id')->nullable()->constrained()->onDelete('cascade');
-            $table->json('rules'); // Menyimpan aturan dalam format JSON
+            $table->json('template_rules'); // Menyimpan aturan dalam format JSON
+            $table->string('template_file')->nullable(); // Path to generated .docx file
+            $table->boolean('is_active')->default(true);
+            $table->integer('download_count')->default(0);
             $table->timestamps();
         });
     }

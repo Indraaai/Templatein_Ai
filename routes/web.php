@@ -26,6 +26,16 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->grou
     // Academic Management
     Route::resource('faculties', \App\Http\Controllers\Admin\FacultyController::class);
     Route::resource('program-studies', \App\Http\Controllers\Admin\ProgramStudyController::class);
+
+    // Template Management
+    Route::resource('templates', \App\Http\Controllers\Admin\TemplateController::class);
+    Route::post('templates/{template}/toggle-active', [\App\Http\Controllers\Admin\TemplateController::class, 'toggleActive'])->name('templates.toggle-active');
+    Route::post('templates/{template}/regenerate', [\App\Http\Controllers\Admin\TemplateController::class, 'regenerate'])->name('templates.regenerate');
+    Route::get('templates/{template}/download', [\App\Http\Controllers\Admin\TemplateController::class, 'download'])->name('templates.download');
+
+    // Student Management
+    Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
+    Route::post('students/bulk-delete', [\App\Http\Controllers\Admin\StudentController::class, 'bulkDelete'])->name('students.bulk-delete');
 });
 
 // Student routes
@@ -33,10 +43,12 @@ Route::prefix('student')->middleware(['auth', 'role:mahasiswa'])->name('student.
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
 });
 
-// API route untuk AJAX loading program studies
-Route::get('/api/program-studies/{facultyId}', function ($facultyId) {
-    return ProgramStudy::where('faculty_id', $facultyId)->get();
-});
+// API route untuk AJAX loading program studies (accessible by authenticated users)
+Route::middleware('auth')->get('/api/program-studies/{facultyId}', function ($facultyId) {
+    return ProgramStudy::where('faculty_id', $facultyId)
+        ->orderBy('name')
+        ->get(['id', 'name']);
+})->name('api.program-studies');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
