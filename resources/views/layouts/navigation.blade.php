@@ -1,17 +1,19 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+<nav x-data="{ open: false }" class="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                    <a href="{{ route('dashboard') }}" class="flex items-center">
+                        <i class="fas fa-file-alt text-blue-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">Template<span class="text-blue-600">In
+                                AI</span></span>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-2 sm:-my-px sm:ms-10 sm:flex items-center">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
@@ -22,7 +24,8 @@
                             <x-dropdown align="left" width="48">
                                 <x-slot name="trigger">
                                     <button
-                                        class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out {{ request()->routeIs('admin.faculties.*', 'admin.program-studies.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }}">
+                                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.faculties.*', 'admin.program-studies.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }}">
+                                        <i class="fas fa-graduation-cap mr-2"></i>
                                         <div>{{ __('Akademik') }}</div>
                                         <div class="ms-1">
                                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
@@ -36,10 +39,10 @@
                                 </x-slot>
                                 <x-slot name="content">
                                     <x-dropdown-link :href="route('admin.faculties.index')">
-                                        🏫 {{ __('Kelola Fakultas') }}
+                                        <i class="fas fa-building text-blue-600 mr-2"></i>{{ __('Kelola Fakultas') }}
                                     </x-dropdown-link>
                                     <x-dropdown-link :href="route('admin.program-studies.index')">
-                                        📚 {{ __('Kelola Program Studi') }}
+                                        <i class="fas fa-book text-indigo-600 mr-2"></i>{{ __('Kelola Program Studi') }}
                                     </x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>
@@ -47,12 +50,27 @@
 
                         <!-- Template Management Link -->
                         <x-nav-link :href="route('admin.templates.index')" :active="request()->routeIs('admin.templates.*')">
-                            {{ __('Template') }}
+                            <i class="fas fa-file-alt mr-2"></i>{{ __('Template') }}
                         </x-nav-link>
 
                         <!-- Student Management Link -->
                         <x-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.*')">
-                            {{ __('Mahasiswa') }}
+                            <i class="fas fa-users mr-2"></i>{{ __('Mahasiswa') }}
+                        </x-nav-link>
+
+                        <!-- Document Review Link (NEW) -->
+                        <x-nav-link :href="route('admin.documents.index')" :active="request()->routeIs('admin.documents.*')">
+                            <i class="fas fa-check-circle mr-2"></i>{{ __('Review Dokumen') }}
+                        </x-nav-link>
+                    @else
+                        <!-- Student Navigation -->
+                        <x-nav-link :href="route('student.templates.index')" :active="request()->routeIs('student.templates.*')">
+                            <i class="fas fa-file-download mr-2"></i>{{ __('Template Dokumen') }}
+                        </x-nav-link>
+
+                        <!-- Document Check Link (NEW) -->
+                        <x-nav-link :href="route('student.documents.index')" :active="request()->routeIs('student.documents.*')">
+                            <i class="fas fa-robot mr-2"></i>{{ __('Pemeriksaan AI') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -63,10 +81,16 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
+                            class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none transition-all duration-200 border border-gray-200">
+                            <div
+                                class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-2 text-white font-semibold">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <div class="text-left">
+                                <div class="font-semibold">{{ Auth::user()->name }}</div>
+                                <div class="text-xs text-gray-500">{{ ucfirst(Auth::user()->role) }}</div>
+                            </div>
+                            <div class="ms-2">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
@@ -78,8 +102,12 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <div class="px-4 py-3 border-b border-gray-100">
+                            <p class="text-xs text-gray-500">Signed in as</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate">{{ Auth::user()->email }}</p>
+                        </div>
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            <i class="fas fa-user-circle mr-2 text-gray-500"></i>{{ __('Profile') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -89,7 +117,7 @@
                             <x-dropdown-link :href="route('logout')"
                                 onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                <i class="fas fa-sign-out-alt mr-2 text-red-500"></i>{{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -141,6 +169,12 @@
                 <!-- Student Management -->
                 <x-responsive-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.*')">
                     👥 {{ __('Kelola Mahasiswa') }}
+                </x-responsive-nav-link>
+            @else
+                <!-- Student Navigation -->
+                <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
+                <x-responsive-nav-link :href="route('student.templates.index')" :active="request()->routeIs('student.templates.*')">
+                    📄 {{ __('Template Dokumen') }}
                 </x-responsive-nav-link>
             @endif
         </div>
