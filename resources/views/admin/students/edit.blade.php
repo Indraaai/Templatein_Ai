@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Edit Mahasiswa') }}
             </h2>
             <a href="{{ route('admin.students.index') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-600 dark:bg-gray-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-600 focus:bg-gray-700 dark:focus:bg-gray-600 active:bg-gray-900 dark:active:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -19,8 +19,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <!-- Error Messages -->
             @if ($errors->any())
-                <div
-                    class="mb-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded relative">
+                <div class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                     <strong class="font-bold">Oops! Ada yang salah.</strong>
                     <ul class="mt-2 list-disc list-inside">
                         @foreach ($errors->all() as $error)
@@ -30,56 +29,83 @@
                 </div>
             @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <!-- Warning Card -->
+            <div class="mb-6 bg-yellow-50 border border-yellow-100 rounded-xl p-4">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-yellow-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-semibold text-yellow-800">
+                            Perhatian!
+                        </h4>
+                        <p class="text-sm text-yellow-700 mt-1">
+                            Perubahan pada fakultas atau program studi akan mempengaruhi akses mahasiswa terhadap
+                            template.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100">
+                <div class="p-6 sm:p-8">
                     <form action="{{ route('admin.students.update', $student) }}" method="POST">
                         @csrf
                         @method('PUT')
 
                         <!-- Name -->
                         <div class="mb-4">
-                            <label for="name"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                                <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
                                 Nama Lengkap <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="name" id="name"
                                 value="{{ old('name', $student->name) }}"
-                                class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 placeholder="e.g., John Doe" required autofocus>
                         </div>
 
                         <!-- Email -->
                         <div class="mb-4">
-                            <label for="email"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
                                 Email <span class="text-red-500">*</span>
                             </label>
                             <input type="email" name="email" id="email"
                                 value="{{ old('email', $student->email) }}"
-                                class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 placeholder="e.g., john.doe@example.com" required>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            <p class="mt-1 text-sm text-gray-500">
                                 Email akan digunakan sebagai username untuk login
                             </p>
                         </div>
 
-                        <hr class="my-6 border-gray-300 dark:border-gray-600">
+                        <hr class="my-6 border-gray-200">
 
                         <!-- Password Section -->
-                        <div
-                            class="mb-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <div class="mb-4 bg-blue-50 border border-blue-100 rounded-lg p-4">
                             <div class="flex items-start">
-                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 mr-3" fill="currentColor"
-                                    viewBox="0 0 20 20">
+                                <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                                         clip-rule="evenodd" />
                                 </svg>
                                 <div class="flex-1">
-                                    <h4 class="text-sm font-semibold text-blue-800 dark:text-blue-300">
+                                    <h4 class="text-sm font-semibold text-blue-800">
                                         Update Password
                                     </h4>
-                                    <p class="text-sm text-blue-700 dark:text-blue-400 mt-1">
+                                    <p class="text-sm text-blue-700 mt-1">
                                         Kosongkan kolom password jika tidak ingin mengubah password mahasiswa.
                                     </p>
                                 </div>
@@ -88,36 +114,50 @@
 
                         <!-- Password -->
                         <div class="mb-4">
-                            <label for="password"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                                <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                    </path>
+                                </svg>
                                 Password Baru
                             </label>
                             <input type="password" name="password" id="password"
-                                class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 placeholder="Minimal 8 karakter (kosongkan jika tidak diubah)">
                         </div>
 
                         <!-- Password Confirmation -->
                         <div class="mb-4">
-                            <label for="password_confirmation"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                                <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                                 Konfirmasi Password Baru
                             </label>
                             <input type="password" name="password_confirmation" id="password_confirmation"
-                                class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 placeholder="Ulangi password baru">
                         </div>
 
-                        <hr class="my-6 border-gray-300 dark:border-gray-600">
+                        <hr class="my-6 border-gray-200">
 
                         <!-- Faculty -->
                         <div class="mb-4">
-                            <label for="faculty_id"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label for="faculty_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                    </path>
+                                </svg>
                                 Fakultas <span class="text-red-500">*</span>
                             </label>
                             <select name="faculty_id" id="faculty_id"
-                                class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 required>
                                 <option value="">-- Pilih Fakultas --</option>
                                 @foreach ($faculties as $faculty)
@@ -131,13 +171,18 @@
 
                         <!-- Program Study -->
                         <div class="mb-4">
-                            <label for="program_study_id"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label for="program_study_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                    </path>
+                                </svg>
                                 Program Studi <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <select name="program_study_id" id="program_study_id"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                     required>
                                     <option value="">-- Pilih Program Studi --</option>
                                     @foreach ($programStudies as $prodi)
@@ -150,7 +195,7 @@
                                 <!-- Loading Spinner -->
                                 <div id="prodi-loading"
                                     class="hidden absolute right-10 top-1/2 transform -translate-y-1/2">
-                                    <svg class="animate-spin h-5 w-5 text-indigo-600 dark:text-indigo-400"
+                                    <svg class="animate-spin h-5 w-5 text-indigo-600"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10"
                                             stroke="currentColor" stroke-width="4"></circle>
@@ -160,19 +205,35 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            <p class="mt-1 text-sm text-gray-500">
                                 Pilih fakultas terlebih dahulu untuk memuat program studi
                             </p>
+                        </div>
+
+                        <!-- Info Card -->
+                        <div class="mb-6 bg-gray-50 border border-gray-100 rounded-lg p-4">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Dibuat:</span>
+                                    <span
+                                        class="text-gray-900 font-medium ml-2">{{ $student->created_at->format('d M Y H:i') }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Terakhir Update:</span>
+                                    <span
+                                        class="text-gray-900 font-medium ml-2">{{ $student->updated_at->format('d M Y H:i') }}</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Submit Button -->
                         <div class="flex items-center justify-end mt-6 space-x-3">
                             <a href="{{ route('admin.students.index') }}"
-                                class="inline-flex items-center px-4 py-2 bg-gray-300 dark:bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-gray-700 dark:text-gray-200 uppercase tracking-widest hover:bg-gray-400 dark:hover:bg-gray-500 focus:bg-gray-400 dark:focus:bg-gray-500 active:bg-gray-500 dark:active:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-50 focus:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                 Batal
                             </a>
                             <button type="submit"
-                                class="inline-flex items-center px-4 py-2 bg-indigo-600 dark:bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:bg-indigo-700 dark:focus:bg-indigo-600 active:bg-indigo-900 dark:active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
