@@ -29,6 +29,10 @@ document.addEventListener('alpine:init', () => {
         editingElementIndex: null,
         showEditModal: false,
 
+        // Add Element Modal state
+        showModal: false,
+        currentSectionIndex: null,
+
         // Live Preview state
         zoom: 75,
 
@@ -43,6 +47,12 @@ document.addEventListener('alpine:init', () => {
                     console.error('Failed to load existing JSON:', e);
                 }
             }
+
+            // Listen for open-element-modal event
+            window.addEventListener('open-element-modal', (event) => {
+                this.showModal = true;
+                this.currentSectionIndex = event.detail.sectionIndex;
+            });
 
             // Update JSON on any change
             this.$watch('formatting', () => this.updateJSON(), { deep: true });
@@ -70,6 +80,10 @@ document.addEventListener('alpine:init', () => {
                 this.renumberChapters();
                 this.updateJSON();
             }
+        },
+
+        deleteSection(index) {
+            this.removeSection(index);
         },
 
         moveSection(fromIndex, toIndex) {
@@ -178,11 +192,15 @@ document.addEventListener('alpine:init', () => {
         },
 
         // Edit Modal
-        openEditModal(sectionIndex, elementIndex) {
+        editElement(sectionIndex, elementIndex) {
             this.editingSectionIndex = sectionIndex;
             this.editingElementIndex = elementIndex;
             this.editingElement = JSON.parse(JSON.stringify(this.sections[sectionIndex].elements[elementIndex]));
             this.showEditModal = true;
+        },
+
+        openEditModal(sectionIndex, elementIndex) {
+            this.editElement(sectionIndex, elementIndex);
         },
 
         closeEditModal() {
@@ -232,6 +250,9 @@ document.addEventListener('alpine:init', () => {
 
         addTableCol() {
             if (this.editingElement && this.editingElement.type === 'table') {
+                // Add header
+                this.editingElement.headers.push('Column ' + (this.editingElement.headers.length + 1));
+                // Add cells to each row
                 this.editingElement.data.forEach(row => row.push(''));
                 this.editingElement.cols++;
             }
@@ -239,6 +260,9 @@ document.addEventListener('alpine:init', () => {
 
         removeTableCol(index) {
             if (this.editingElement && this.editingElement.type === 'table' && this.editingElement.cols > 1) {
+                // Remove header
+                this.editingElement.headers.splice(index, 1);
+                // Remove cells from each row
                 this.editingElement.data.forEach(row => row.splice(index, 1));
                 this.editingElement.cols--;
             }

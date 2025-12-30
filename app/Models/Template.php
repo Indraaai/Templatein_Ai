@@ -22,7 +22,6 @@ class Template extends Model
     ];
 
     protected $casts = [
-        'template_rules' => 'array',
         'is_active' => 'boolean',
         'download_count' => 'integer',
     ];

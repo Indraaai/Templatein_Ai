@@ -1,389 +1,400 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Detail Template') }}
-            </h2>
-            <div class="flex space-x-2">
-                <a href="{{ route('admin.templates.edit', $template) }}"
-                    class="inline-flex items-center px-4 py-2 bg-yellow-600 dark:bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 dark:hover:bg-yellow-600 focus:bg-yellow-700 dark:focus:bg-yellow-600 active:bg-yellow-900 dark:active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                        </path>
-                    </svg>
-                    Edit
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center space-x-3 mb-2">
+                    <a href="{{ route('admin.templates.index') }}" class="text-gray-500 hover:text-gray-700 transition">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h2 class="text-3xl font-bold text-gray-800">
+                        <i class="fas fa-file-alt text-blue-600 mr-3"></i>Detail Template
+                    </h2>
+                </div>
+                <p class="text-gray-600 ml-11">{{ $template->name }}</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="{{ route('admin.templates.builder', $template) }}"
+                    class="bg-purple-600 text-white px-5 py-2.5 rounded-lg hover:bg-purple-700 transition-all duration-200 flex items-center space-x-2 shadow-lg">
+                    <i class="fas fa-tools"></i>
+                    <span>Builder</span>
                 </a>
-                <a href="{{ route('admin.templates.index') }}"
-                    class="inline-flex items-center px-4 py-2 bg-gray-600 dark:bg-gray-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-600 focus:bg-gray-700 dark:focus:bg-gray-600 active:bg-gray-900 dark:active:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                    Kembali
+                <a href="{{ route('admin.templates.edit', $template) }}"
+                    class="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center space-x-2 shadow-lg">
+                    <i class="fas fa-edit"></i>
+                    <span>Edit</span>
                 </a>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Success/Error Messages -->
-            @if (session('success'))
-                <div
-                    class="mb-4 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 px-4 py-3 rounded relative">
-                    {{ session('success') }}
-                </div>
-            @endif
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            @if (session('error'))
-                <div
-                    class="mb-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded relative">
-                    {{ session('error') }}
+            @if (session('success'))
+                <div class="bg-green-50 border-l-4 border-green-500 rounded-lg p-4 mb-6 flex items-center">
+                    <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-green-800 font-medium">{{ session('success') }}</p>
+                    </div>
                 </div>
             @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Template Info -->
+                <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Basic Information -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informasi Template</h3>
-
-                            <div class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+                            <h3 class="text-lg font-bold text-white flex items-center">
+                                <i class="fas fa-info-circle mr-2"></i>Informasi Template
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Nama
-                                        Template</label>
-                                    <p class="mt-1 text-lg text-gray-900 dark:text-white">{{ $template->name }}</p>
+                                    <p class="text-sm text-gray-500 mb-1">Nama Template</p>
+                                    <p class="text-base font-semibold text-gray-900">{{ $template->name }}</p>
                                 </div>
-
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Tipe
-                                        Template</label>
-                                    <p class="mt-1">
-                                        <span
-                                            class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full
-                                            @if ($template->type == 'skripsi') bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300
-                                            @elseif($template->type == 'proposal') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300
-                                            @elseif($template->type == 'tugas_akhir') bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300
-                                            @elseif($template->type == 'laporan_praktikum') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
-                                            @elseif($template->type == 'makalah') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300
-                                            @else bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300 @endif">
-                                            {{ ucfirst(str_replace('_', ' ', $template->type)) }}
-                                        </span>
+                                    <p class="text-sm text-gray-500 mb-1">Tipe Dokumen</p>
+                                    @php
+                                        $typeLabels = [
+                                            'skripsi' => 'Skripsi',
+                                            'proposal' => 'Proposal',
+                                            'tugas_akhir' => 'Tugas Akhir',
+                                            'laporan_praktikum' => 'Laporan Praktikum',
+                                            'makalah' => 'Makalah',
+                                            'lainnya' => 'Lainnya',
+                                        ];
+                                    @endphp
+                                    <p class="text-base font-semibold text-gray-900">
+                                        {{ $typeLabels[$template->type] ?? ucfirst($template->type) }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 mb-1">Fakultas</p>
+                                    <p class="text-base font-semibold text-gray-900">{{ $template->faculty->name }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 mb-1">Program Studi</p>
+                                    <p class="text-base font-semibold text-gray-900">
+                                        {{ $template->programStudy ? $template->programStudy->name : 'Semua Program Studi' }}
                                     </p>
                                 </div>
-
-                                @if ($template->description)
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-500 dark:text-gray-400">Deskripsi</label>
-                                        <p class="mt-1 text-gray-900 dark:text-white">{{ $template->description }}</p>
-                                    </div>
-                                @endif
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-500 dark:text-gray-400">Fakultas</label>
-                                        <p class="mt-1 text-gray-900 dark:text-white">
-                                            {{ $template->faculty->name ?? 'Semua Fakultas' }}</p>
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-500 dark:text-gray-400">Program
-                                            Studi</label>
-                                        <p class="mt-1 text-gray-900 dark:text-white">
-                                            {{ $template->programStudy->name ?? 'Semua Prodi' }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-3 gap-4">
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-500 dark:text-gray-400">Status</label>
-                                        <p class="mt-1">
-                                            <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $template->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }}">
-                                                {{ $template->is_active ? 'Aktif' : 'Nonaktif' }}
-                                            </span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Total
-                                            Download</label>
-                                        <p class="mt-1 text-gray-900 dark:text-white">{{ $template->download_count }}x
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-500 dark:text-gray-400">Dibuat</label>
-                                        <p class="mt-1 text-gray-900 dark:text-white">
-                                            {{ $template->created_at->format('d M Y') }}</p>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Template Structure -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Struktur Template</h3>
-
-                            @if (isset($rules['sections']) && count($rules['sections']) > 0)
-                                <div class="space-y-4">
-                                    @foreach ($rules['sections'] as $index => $section)
-                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                                            <div class="flex items-center justify-between mb-3">
-                                                <h4 class="font-medium text-gray-900 dark:text-white">
-                                                    {{ ucfirst($section['type']) }}
-                                                    @if (isset($section['chapter_number']))
-                                                        - BAB {{ $section['chapter_number'] }}
-                                                    @endif
-                                                </h4>
-                                                <span class="text-sm text-gray-500 dark:text-gray-400">
-                                                    {{ count($section['elements'] ?? []) }} elemen
-                                                </span>
-                                            </div>
-
-                                            @if (isset($section['elements']) && count($section['elements']) > 0)
-                                                <div class="space-y-2">
-                                                    @foreach ($section['elements'] as $element)
-                                                        <div class="flex items-center text-sm">
-                                                            <span
-                                                                class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300 mr-2">
-                                                                {{ $element['type'] }}
-                                                            </span>
-                                                            @if (isset($element['text']))
-                                                                <span class="text-gray-600 dark:text-gray-400 truncate">
-                                                                    {{ Str::limit($element['text'], 60) }}
-                                                                </span>
-                                                            @elseif($element['type'] == 'list')
-                                                                <span class="text-gray-600 dark:text-gray-400">
-                                                                    {{ count($element['items'] ?? []) }} items
-                                                                </span>
-                                                            @elseif($element['type'] == 'table')
-                                                                <span class="text-gray-600 dark:text-gray-400">
-                                                                    {{ count($element['rows'] ?? []) }} rows
-                                                                </span>
-                                                            @endif
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-                                        </div>
-                                    @endforeach
+                            @if ($template->description)
+                                <div class="pt-4 border-t border-gray-100">
+                                    <p class="text-sm text-gray-500 mb-2">Deskripsi</p>
+                                    <p class="text-gray-700">{{ $template->description }}</p>
                                 </div>
-                            @else
-                                <p class="text-gray-500 dark:text-gray-400">Tidak ada struktur tersedia.</p>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Formatting Rules -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <!-- Template Rules -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4">
+                            <h3 class="text-lg font-bold text-white flex items-center">
+                                <i class="fas fa-cog mr-2"></i>Aturan Template
+                            </h3>
+                        </div>
                         <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Pengaturan Format</h3>
-
+                            <!-- Formatting Rules -->
                             @if (isset($rules['formatting']))
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Ukuran
-                                            Halaman</label>
-                                        <p class="mt-1 text-gray-900 dark:text-white">
-                                            {{ $rules['formatting']['page_size'] ?? 'A4' }}</p>
+                                <div class="mb-6">
+                                    <h4 class="font-bold text-gray-900 mb-4 flex items-center">
+                                        <i class="fas fa-font text-blue-600 mr-2"></i>Format Dokumen
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        @if (isset($rules['formatting']['font']))
+                                            <div class="bg-gray-50 rounded-lg p-4">
+                                                <p class="text-sm text-gray-500 mb-2">Font</p>
+                                                <p class="font-semibold text-gray-900">
+                                                    {{ $rules['formatting']['font']['name'] ?? 'Times New Roman' }}
+                                                    ({{ $rules['formatting']['font']['size'] ?? 12 }}pt)
+                                                </p>
+                                            </div>
+                                        @endif
+                                        @if (isset($rules['formatting']['page_size']))
+                                            <div class="bg-gray-50 rounded-lg p-4">
+                                                <p class="text-sm text-gray-500 mb-2">Ukuran Kertas</p>
+                                                <p class="font-semibold text-gray-900">
+                                                    {{ strtoupper($rules['formatting']['page_size']) }}</p>
+                                            </div>
+                                        @endif
+                                        @if (isset($rules['formatting']['orientation']))
+                                            <div class="bg-gray-50 rounded-lg p-4">
+                                                <p class="text-sm text-gray-500 mb-2">Orientasi</p>
+                                                <p class="font-semibold text-gray-900">
+                                                    {{ ucfirst($rules['formatting']['orientation']) }}</p>
+                                            </div>
+                                        @endif
+                                        @if (isset($rules['formatting']['font']['line_spacing']))
+                                            <div class="bg-gray-50 rounded-lg p-4">
+                                                <p class="text-sm text-gray-500 mb-2">Spasi Baris</p>
+                                                <p class="font-semibold text-gray-900">
+                                                    {{ $rules['formatting']['font']['line_spacing'] }}</p>
+                                            </div>
+                                        @endif
                                     </div>
 
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-500 dark:text-gray-400">Orientasi</label>
-                                        <p class="mt-1 text-gray-900 dark:text-white">
-                                            {{ ucfirst($rules['formatting']['orientation'] ?? 'portrait') }}</p>
-                                    </div>
-
-                                    @if (isset($rules['formatting']['margin']))
-                                        <div class="col-span-2">
-                                            <label
-                                                class="block text-sm font-medium text-gray-500 dark:text-gray-400">Margin
-                                                (cm)</label>
-                                            <p class="mt-1 text-gray-900 dark:text-white">
-                                                Top: {{ $rules['formatting']['margin']['top'] ?? 3 }},
-                                                Bottom: {{ $rules['formatting']['margin']['bottom'] ?? 3 }},
-                                                Left: {{ $rules['formatting']['margin']['left'] ?? 4 }},
-                                                Right: {{ $rules['formatting']['margin']['right'] ?? 3 }}
-                                            </p>
-                                        </div>
-                                    @endif
-
-                                    @if (isset($rules['formatting']['font']))
-                                        <div>
-                                            <label
-                                                class="block text-sm font-medium text-gray-500 dark:text-gray-400">Font</label>
-                                            <p class="mt-1 text-gray-900 dark:text-white">
-                                                {{ $rules['formatting']['font']['name'] ?? 'Times New Roman' }}</p>
-                                        </div>
-
-                                        <div>
-                                            <label
-                                                class="block text-sm font-medium text-gray-500 dark:text-gray-400">Ukuran
-                                                Font</label>
-                                            <p class="mt-1 text-gray-900 dark:text-white">
-                                                {{ $rules['formatting']['font']['size'] ?? 12 }} pt</p>
-                                        </div>
-
-                                        <div>
-                                            <label
-                                                class="block text-sm font-medium text-gray-500 dark:text-gray-400">Jarak
-                                                Baris</label>
-                                            <p class="mt-1 text-gray-900 dark:text-white">
-                                                {{ $rules['formatting']['font']['line_spacing'] ?? 1.5 }}</p>
+                                    @if (isset($rules['formatting']['margins']))
+                                        <div class="mt-4 bg-gray-50 rounded-lg p-4">
+                                            <p class="text-sm text-gray-500 mb-2">Margin (cm)</p>
+                                            <div class="grid grid-cols-4 gap-3 mt-2">
+                                                <div class="text-center">
+                                                    <p class="text-xs text-gray-500">Atas</p>
+                                                    <p class="font-semibold text-gray-900">
+                                                        {{ $rules['formatting']['margins']['top'] ?? 3 }}</p>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="text-xs text-gray-500">Bawah</p>
+                                                    <p class="font-semibold text-gray-900">
+                                                        {{ $rules['formatting']['margins']['bottom'] ?? 3 }}</p>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="text-xs text-gray-500">Kiri</p>
+                                                    <p class="font-semibold text-gray-900">
+                                                        {{ $rules['formatting']['margins']['left'] ?? 4 }}</p>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="text-xs text-gray-500">Kanan</p>
+                                                    <p class="font-semibold text-gray-900">
+                                                        {{ $rules['formatting']['margins']['right'] ?? 3 }}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
+                            @endif
+
+                            <!-- Sections -->
+                            @if (isset($rules['sections']) && count($rules['sections']) > 0)
+                                <div>
+                                    <h4 class="font-bold text-gray-900 mb-4 flex items-center">
+                                        <i class="fas fa-list text-green-600 mr-2"></i>Struktur Dokumen
+                                    </h4>
+                                    <div class="space-y-3">
+                                        @foreach ($rules['sections'] as $index => $section)
+                                            <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                                <div class="flex items-start justify-between">
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center space-x-2 mb-2">
+                                                            <span
+                                                                class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">
+                                                                {{ $index + 1 }}
+                                                            </span>
+                                                            <p class="font-bold text-gray-900">
+                                                                {{ $section['title'] ?? 'Untitled Section' }}</p>
+                                                        </div>
+                                                        @if (isset($section['description']))
+                                                            <p class="text-sm text-gray-600 ml-10">
+                                                                {{ $section['description'] }}</p>
+                                                        @endif
+                                                    </div>
+                                                    @if (isset($section['required']) && $section['required'])
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                                                            Wajib
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             @else
-                                <p class="text-gray-500 dark:text-gray-400">Tidak ada pengaturan format.</p>
+                                <div class="text-center py-8">
+                                    <i class="fas fa-info-circle text-gray-400 text-3xl mb-3"></i>
+                                    <p class="text-gray-500">Belum ada struktur dokumen yang ditambahkan</p>
+                                    <a href="{{ route('admin.templates.builder', $template) }}"
+                                        class="inline-block mt-4 text-blue-600 hover:text-blue-700 font-medium">
+                                        Tambahkan di Builder <i class="fas fa-arrow-right ml-1"></i>
+                                    </a>
+                                </div>
                             @endif
                         </div>
                     </div>
                 </div>
 
-                <!-- Actions & Stats -->
+                <!-- Sidebar -->
                 <div class="space-y-6">
-                    <!-- Quick Actions -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Aksi Cepat</h3>
+                    <!-- Status Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
+                            <h3 class="text-lg font-bold text-white flex items-center">
+                                <i class="fas fa-toggle-on mr-2"></i>Status
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Status Template</span>
+                                @if ($template->is_active)
+                                    <span
+                                        class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-green-100 text-green-700">
+                                        <i class="fas fa-check-circle mr-1.5"></i>Aktif
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-700">
+                                        <i class="fas fa-pause-circle mr-1.5"></i>Nonaktif
+                                    </span>
+                                @endif
+                            </div>
 
-                            <div class="space-y-3">
-                                <a href="{{ route('admin.templates.download', $template) }}"
-                                    class="w-full inline-flex justify-center items-center px-4 py-2 bg-green-600 dark:bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 dark:hover:bg-green-600 focus:bg-green-700 dark:focus:bg-green-600 active:bg-green-900 dark:active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                    </svg>
-                                    Download Template
-                                </a>
+                            <form action="{{ route('admin.templates.toggle-active', $template) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full px-4 py-2.5 rounded-lg font-medium transition-all duration-200
+                                    {{ $template->is_active ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-green-600 text-white hover:bg-green-700' }}">
+                                    <i class="fas fa-{{ $template->is_active ? 'pause' : 'play' }} mr-2"></i>
+                                    {{ $template->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
 
-                                <form action="{{ route('admin.templates.regenerate', $template) }}" method="POST"
-                                    onsubmit="return confirm('Generate ulang dokumen template?');">
-                                    @csrf
-                                    <button type="submit"
-                                        class="w-full inline-flex justify-center items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 dark:hover:bg-blue-600 focus:bg-blue-700 dark:focus:bg-blue-600 active:bg-blue-900 dark:active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                                            </path>
-                                        </svg>
-                                        Regenerate Dokumen
-                                    </button>
-                                </form>
+                    <!-- Statistics Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4">
+                            <h3 class="text-lg font-bold text-white flex items-center">
+                                <i class="fas fa-chart-bar mr-2"></i>Statistik
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-download text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Total Unduhan</p>
+                                        <p class="text-2xl font-bold text-gray-900">
+                                            {{ number_format($template->download_count) }}</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                                <form action="{{ route('admin.templates.toggle-active', $template) }}"
-                                    method="POST">
-                                    @csrf
-                                    <button type="submit"
-                                        class="w-full inline-flex justify-center items-center px-4 py-2 {{ $template->is_active ? 'bg-gray-600 dark:bg-gray-500' : 'bg-green-600 dark:bg-green-500' }} border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                        {{ $template->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
-                                    </button>
-                                </form>
-
-                                <form action="{{ route('admin.templates.destroy', $template) }}" method="POST"
-                                    onsubmit="return confirm('Yakin ingin menghapus template ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="w-full inline-flex justify-center items-center px-4 py-2 bg-red-600 dark:bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 dark:hover:bg-red-600 focus:bg-red-700 dark:focus:bg-red-600 active:bg-red-900 dark:active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                            </path>
-                                        </svg>
-                                        Hapus Template
-                                    </button>
-                                </form>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-file-check text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Dokumen Dicek</p>
+                                        <p class="text-2xl font-bold text-gray-900">
+                                            {{ number_format($template->documentChecks->count()) }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- File Info -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">File Template</h3>
-
+                    <!-- Actions Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-6 py-4">
+                            <h3 class="text-lg font-bold text-white flex items-center">
+                                <i class="fas fa-bolt mr-2"></i>Aksi Cepat
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-3">
                             @if ($template->template_file)
-                                <div class="space-y-3">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Nama
-                                            File</label>
-                                        <p class="mt-1 text-sm text-gray-900 dark:text-white break-all">
-                                            {{ basename($template->template_file) }}</p>
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-500 dark:text-gray-400">Path</label>
-                                        <p class="mt-1 text-sm text-gray-900 dark:text-white break-all">
-                                            {{ $template->template_file }}</p>
-                                    </div>
-
-                                    @php
-                                        $fullPath = storage_path('app/' . $template->template_file);
-                                        $fileExists = file_exists($fullPath);
-                                        $fileSize = $fileExists ? filesize($fullPath) : 0;
-                                    @endphp
-
-                                    <div>
-                                        <label
-                                            class="block text-sm font-medium text-gray-500 dark:text-gray-400">Ukuran
-                                            File</label>
-                                        <p class="mt-1 text-sm text-gray-900 dark:text-white">
-                                            @if ($fileExists)
-                                                {{ number_format($fileSize / 1024, 2) }} KB
-                                            @else
-                                                <span class="text-red-600 dark:text-red-400">File tidak
-                                                    ditemukan</span>
-                                            @endif
-                                        </p>
-                                    </div>
-                                </div>
-                            @else
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Belum ada file template.</p>
+                                <a href="{{ route('admin.templates.download', $template) }}"
+                                    class="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
+                                    <i class="fas fa-download"></i>
+                                    <span>Download Template</span>
+                                </a>
                             @endif
+
+                            <form action="{{ route('admin.templates.regenerate', $template) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-200 font-medium">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>Regenerate Dokumen</span>
+                                </button>
+                            </form>
+
+                            <button onclick="deleteTemplate()"
+                                class="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium">
+                                <i class="fas fa-trash"></i>
+                                <span>Hapus Template</span>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Document Checks History -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Riwayat Pemeriksaan
-                            </h3>
-
-                            @if ($template->documentChecks->count() > 0)
-                                <div class="space-y-2">
-                                    @foreach ($template->documentChecks->take(5) as $check)
-                                        <div class="text-sm">
-                                            <p class="text-gray-900 dark:text-white">{{ $check->user->name }}</p>
-                                            <p class="text-gray-500 dark:text-gray-400">
-                                                {{ $check->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                @if ($template->documentChecks->count() > 5)
-                                    <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
-                                        +{{ $template->documentChecks->count() - 5 }} lainnya
-                                    </p>
-                                @endif
-                            @else
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Belum ada riwayat pemeriksaan.</p>
-                            @endif
+                    <!-- Timestamps -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500">Dibuat</span>
+                                <span
+                                    class="text-gray-900 font-medium">{{ $template->created_at->format('d M Y') }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500">Diperbarui</span>
+                                <span
+                                    class="text-gray-900 font-medium">{{ $template->updated_at->diffForHumans() }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4"
+        style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all">
+            <div class="p-6">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Hapus Template?</h3>
+                <p class="text-gray-600 text-center mb-6">Template yang dihapus tidak dapat dikembalikan. Yakin ingin
+                    melanjutkan?</p>
+                <div class="flex space-x-3">
+                    <button onclick="closeDeleteModal()"
+                        class="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
+                        Batal
+                    </button>
+                    <form action="{{ route('admin.templates.destroy', $template) }}" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            class="w-full bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-all duration-200 font-medium">
+                            Hapus
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+        <script>
+            function deleteTemplate() {
+                document.getElementById('deleteModal').style.display = 'flex';
+            }
+
+            function closeDeleteModal() {
+                document.getElementById('deleteModal').style.display = 'none';
+            }
+
+            // Close modal on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDeleteModal();
+                }
+            });
+
+            // Close modal on outside click
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeDeleteModal();
+                }
+            });
+        </script>
+    @endpush
 </x-app-layout>

@@ -94,7 +94,6 @@ class TemplateController extends Controller
             'faculty_id' => 'required|exists:faculties,id',
             'program_study_id' => 'nullable|exists:program_studies,id',
             'description' => 'nullable|string',
-            'template_rules' => 'required|json',
             'is_active' => 'boolean',
         ]);
 
@@ -108,32 +107,99 @@ class TemplateController extends Controller
 
         DB::beginTransaction();
         try {
-            // Create template
+            // Create template with default rules
+            $defaultRules = json_encode([
+                'formatting' => [
+                    'font' => [
+                        'name' => 'Times New Roman',
+                        'size' => 12,
+                        'line_spacing' => 1.5
+                    ],
+                    'page_size' => 'A4',
+                    'orientation' => 'portrait',
+                    'margins' => [
+                        'top' => 3,
+                        'bottom' => 3,
+                        'left' => 4,
+                        'right' => 3
+                    ]
+                ],
+                'sections' => []
+            ]);
+
             $template = Template::create([
                 'name' => $validated['name'],
                 'type' => $validated['type'],
                 'faculty_id' => $validated['faculty_id'],
                 'program_study_id' => $validated['program_study_id'] ?? null,
                 'description' => $validated['description'] ?? null,
+                'template_rules' => $defaultRules,
+                'is_active' => $request->boolean('is_active', false), // Default inactive until builder is completed
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.templates.builder', $template)
+                ->with('success', 'Template berhasil dibuat. Silakan lengkapi struktur template.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal membuat template: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    /**
+     * Show template builder page
+     */
+    public function builder(Template $template)
+    {
+        // Parse current rules
+        $currentRules = json_decode($template->template_rules, true);
+
+        return view('admin.templates.builder', compact('template', 'currentRules'));
+    }
+
+    /**
+     * Save template builder
+     */
+    public function saveBuilder(Request $request, Template $template)
+    {
+        $validated = $request->validate([
+            'template_rules' => 'required|json',
+            'is_active' => 'boolean',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Update template rules
+            $template->update([
                 'template_rules' => $validated['template_rules'],
-                'is_active' => $request->boolean('is_active', true),
+                'is_active' => $request->boolean('is_active', false),
             ]);
 
             // Generate document
+            if ($template->template_file && Storage::exists($template->template_file)) {
+                Storage::delete($template->template_file);
+            }
+
             $filePath = $this->generatorService->generateDocument($template);
 
-            // Update template with file path
             $template->update([
                 'template_file' => $filePath,
             ]);
 
             DB::commit();
 
-            return redirect()->route('admin.templates.show', $template)
-                ->with('success', 'Template berhasil dibuat dan dokumen telah digenerate.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Template berhasil disimpan dan dokumen telah digenerate.',
+                'redirect' => route('admin.templates.show', $template)
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Gagal membuat template: ' . $e->getMessage()])->withInput();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan template: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -307,17 +373,5 @@ class TemplateController extends Controller
         $status = $template->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
         return back()->with('success', "Template berhasil {$status}.");
-    }
-
-    /**
-     * Get program studies by faculty (AJAX)
-     */
-    public function getProgramStudiesByFaculty(Request $request, $facultyId)
-    {
-        $programStudies = ProgramStudy::where('faculty_id', $facultyId)
-            ->orderBy('name')
-            ->get(['id', 'name']);
-
-        return response()->json($programStudies);
     }
 }

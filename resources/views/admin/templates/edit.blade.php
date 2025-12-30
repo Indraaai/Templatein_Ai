@@ -1,45 +1,42 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Edit Template') }}
-            </h2>
-            <div class="flex space-x-2">
-                <a href="{{ route('admin.templates.show', $template) }}"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 dark:hover:bg-blue-600 focus:bg-blue-700 dark:focus:bg-blue-600 active:bg-blue-900 dark:active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                        </path>
-                    </svg>
-                    Detail
-                </a>
-                <a href="{{ route('admin.templates.index') }}"
-                    class="inline-flex items-center px-4 py-2 bg-gray-600 dark:bg-gray-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-600 focus:bg-gray-700 dark:focus:bg-gray-600 active:bg-gray-900 dark:active:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Kembali
-                </a>
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center space-x-3 mb-2">
+                    <a href="{{ route('admin.templates.show', $template) }}"
+                        class="text-gray-500 hover:text-gray-700 transition">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h2 class="text-3xl font-bold text-gray-800">
+                        <i class="fas fa-edit text-blue-600 mr-3"></i>Edit Template
+                    </h2>
+                </div>
+                <p class="text-gray-600 ml-11">Edit informasi dan pengaturan template</p>
             </div>
+            <a href="{{ route('admin.templates.builder', $template) }}"
+                class="bg-purple-600 text-white px-5 py-2.5 rounded-lg hover:bg-purple-700 transition-all duration-200 flex items-center space-x-2 shadow-lg">
+                <i class="fas fa-tools"></i>
+                <span>Buka Builder</span>
+            </a>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Error Messages -->
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
             @if ($errors->any())
-                <div
-                    class="mb-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded relative">
-                    <strong class="font-bold">Oops! Ada yang salah.</strong>
-                    <ul class="mt-2 list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3 mt-0.5"></i>
+                        <div class="flex-1">
+                            <p class="text-red-800 font-medium mb-2">Terdapat beberapa kesalahan:</p>
+                            <ul class="list-disc list-inside text-red-700 space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             @endif
 
@@ -47,434 +44,363 @@
                 @csrf
                 @method('PUT')
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Main Form -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- Basic Information -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informasi Dasar
-                                </h3>
+                <!-- Basic Information -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+                        <h3 class="text-lg font-bold text-white flex items-center">
+                            <i class="fas fa-info-circle mr-2"></i>Informasi Dasar
+                        </h3>
+                    </div>
+                    <div class="p-6 space-y-5">
+                        <!-- Template Name -->
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Nama Template <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="name" id="name"
+                                value="{{ old('name', $template->name) }}" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                placeholder="Contoh: Template Skripsi Teknik Informatika">
+                            <p class="text-xs text-gray-500 mt-1.5">
+                                <i class="fas fa-lightbulb mr-1"></i>Gunakan nama yang jelas dan deskriptif
+                            </p>
+                        </div>
 
-                                <!-- Template Name -->
-                                <div class="mb-4">
-                                    <label for="name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Nama Template <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="name" id="name"
-                                        value="{{ old('name', $template->name) }}" required
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                                        placeholder="Contoh: Template Skripsi S1">
-                                </div>
+                        <!-- Type -->
+                        <div>
+                            <label for="type" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Tipe Dokumen <span class="text-red-500">*</span>
+                            </label>
+                            <select name="type" id="type" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                <option value="">Pilih Tipe Dokumen</option>
+                                <option value="skripsi"
+                                    {{ old('type', $template->type) == 'skripsi' ? 'selected' : '' }}>Skripsi</option>
+                                <option value="proposal"
+                                    {{ old('type', $template->type) == 'proposal' ? 'selected' : '' }}>Proposal</option>
+                                <option value="tugas_akhir"
+                                    {{ old('type', $template->type) == 'tugas_akhir' ? 'selected' : '' }}>Tugas Akhir
+                                </option>
+                                <option value="laporan_praktikum"
+                                    {{ old('type', $template->type) == 'laporan_praktikum' ? 'selected' : '' }}>Laporan
+                                    Praktikum</option>
+                                <option value="makalah"
+                                    {{ old('type', $template->type) == 'makalah' ? 'selected' : '' }}>Makalah</option>
+                                <option value="lainnya"
+                                    {{ old('type', $template->type) == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
+                            </select>
+                        </div>
 
-                                <!-- Template Type -->
-                                <div class="mb-4">
-                                    <label for="type"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Tipe Template <span class="text-red-500">*</span>
-                                    </label>
-                                    <select name="type" id="type" required
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                                        <option value="">Pilih Tipe Template</option>
-                                        <option value="skripsi"
-                                            {{ old('type', $template->type) == 'skripsi' ? 'selected' : '' }}>Skripsi
-                                        </option>
-                                        <option value="proposal"
-                                            {{ old('type', $template->type) == 'proposal' ? 'selected' : '' }}>Proposal
-                                        </option>
-                                        <option value="tugas_akhir"
-                                            {{ old('type', $template->type) == 'tugas_akhir' ? 'selected' : '' }}>Tugas
-                                            Akhir</option>
-                                        <option value="laporan_praktikum"
-                                            {{ old('type', $template->type) == 'laporan_praktikum' ? 'selected' : '' }}>
-                                            Laporan Praktikum</option>
-                                        <option value="makalah"
-                                            {{ old('type', $template->type) == 'makalah' ? 'selected' : '' }}>Makalah
-                                        </option>
-                                        <option value="lainnya"
-                                            {{ old('type', $template->type) == 'lainnya' ? 'selected' : '' }}>Lainnya
-                                        </option>
-                                    </select>
-                                </div>
+                        <!-- Description -->
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Deskripsi
+                            </label>
+                            <textarea name="description" id="description" rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                placeholder="Jelaskan detail template ini...">{{ old('description', $template->description) }}</textarea>
+                            <p class="text-xs text-gray-500 mt-1.5">
+                                <i class="fas fa-info-circle mr-1"></i>Opsional: Tambahkan deskripsi untuk memudahkan
+                                identifikasi
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-                                <!-- Faculty -->
-                                <div class="mb-4">
-                                    <label for="faculty_id"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Fakultas <span class="text-red-500">*</span>
-                                    </label>
-                                    <select name="faculty_id" id="faculty_id" required
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                                        <option value="">Pilih Fakultas</option>
-                                        @foreach ($faculties as $faculty)
-                                            <option value="{{ $faculty->id }}"
-                                                {{ old('faculty_id', $template->faculty_id) == $faculty->id ? 'selected' : '' }}>
-                                                {{ $faculty->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Kosongkan jika template
-                                        untuk semua fakultas</p>
-                                </div>
+                <!-- Academic Information -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4">
+                        <h3 class="text-lg font-bold text-white flex items-center">
+                            <i class="fas fa-graduation-cap mr-2"></i>Informasi Akademik
+                        </h3>
+                    </div>
+                    <div class="p-6 space-y-5">
+                        <!-- Faculty -->
+                        <div>
+                            <label for="faculty_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Fakultas <span class="text-red-500">*</span>
+                            </label>
+                            <select name="faculty_id" id="faculty_id" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                <option value="">Pilih Fakultas</option>
+                                @foreach ($faculties as $faculty)
+                                    <option value="{{ $faculty->id }}"
+                                        {{ old('faculty_id', $template->faculty_id) == $faculty->id ? 'selected' : '' }}>
+                                        {{ $faculty->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                                <!-- Program Study -->
-                                <div class="mb-4">
-                                    <label for="program_study_id"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Program Studi
-                                    </label>
-                                    <div class="relative">
-                                        <select name="program_study_id" id="program_study_id"
-                                            class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <option value="">-- Semua Program Studi (Template Umum) --</option>
-                                            @foreach ($programStudies as $prodi)
-                                                <option value="{{ $prodi->id }}"
-                                                    data-faculty="{{ $prodi->faculty_id }}"
-                                                    {{ old('program_study_id', $template->program_study_id) == $prodi->id ? 'selected' : '' }}>
-                                                    {{ $prodi->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <!-- Loading Spinner -->
-                                        <div id="prodi-loading"
-                                            class="hidden absolute right-10 top-1/2 transform -translate-y-1/2">
-                                            <svg class="animate-spin h-5 w-5 text-indigo-600 dark:text-indigo-400"
-                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                    stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor"
-                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                        <span class="inline-flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span><strong>Kosongkan</strong> jika template berlaku untuk <strong>semua
-                                                    prodi</strong> dalam fakultas.</span>
-                                        </span>
+                        <!-- Program Study -->
+                        <div>
+                            <label for="program_study_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Program Studi
+                            </label>
+                            <select name="program_study_id" id="program_study_id"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                <option value="">Pilih Program Studi (Opsional)</option>
+                                @foreach ($programStudies as $programStudy)
+                                    <option value="{{ $programStudy->id }}"
+                                        data-faculty="{{ $programStudy->faculty_id }}"
+                                        {{ old('program_study_id', $template->program_study_id) == $programStudy->id ? 'selected' : '' }}>
+                                        {{ $programStudy->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-gray-500 mt-1.5">
+                                <i class="fas fa-info-circle mr-1"></i>Kosongkan jika template berlaku untuk semua
+                                program studi
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Template Rules (Preview Only) -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
+                        <h3 class="text-lg font-bold text-white flex items-center">
+                            <i class="fas fa-cog mr-2"></i>Aturan Template
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-info-circle text-blue-600 text-xl mr-3 mt-0.5"></i>
+                                <div>
+                                    <p class="text-blue-900 font-medium mb-1">Gunakan Template Builder</p>
+                                    <p class="text-blue-800 text-sm">
+                                        Untuk mengubah aturan template seperti format dokumen, margins, font, dan
+                                        struktur dokumen,
+                                        silakan gunakan <strong>Template Builder</strong>.
                                     </p>
-                                </div>
-
-                                <!-- Description -->
-                                <div class="mb-4">
-                                    <label for="description"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Deskripsi
-                                    </label>
-                                    <textarea name="description" id="description" rows="3"
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                                        placeholder="Deskripsi singkat tentang template ini...">{{ old('description', $template->description) }}</textarea>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Template Rules -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Template Rules
-                                        (JSON)</h3>
-                                    <div class="flex items-center space-x-2">
-                                        <button type="button" onclick="formatJSON()"
-                                            class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                                            Format JSON
-                                        </button>
-                                        <button type="button" onclick="loadSampleRules()"
-                                            class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
-                                            Load Sample
-                                        </button>
+                        @php
+                            $rules = json_decode($template->template_rules, true);
+                        @endphp
+
+                        @if (isset($rules['formatting']))
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                    <i class="fas fa-font text-blue-600 mr-2"></i>Format Saat Ini
+                                </h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                    <div>
+                                        <p class="text-gray-500">Font</p>
+                                        <p class="font-medium text-gray-900">
+                                            {{ $rules['formatting']['font']['name'] ?? 'Times New Roman' }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Ukuran</p>
+                                        <p class="font-medium text-gray-900">
+                                            {{ $rules['formatting']['font']['size'] ?? 12 }}pt</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Spasi</p>
+                                        <p class="font-medium text-gray-900">
+                                            {{ $rules['formatting']['font']['line_spacing'] ?? 1.5 }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Kertas</p>
+                                        <p class="font-medium text-gray-900">
+                                            {{ strtoupper($rules['formatting']['page_size'] ?? 'A4') }}</p>
                                     </div>
                                 </div>
+                            </div>
+                        @endif
 
-                                <div class="mb-4">
-                                    <label for="template_rules"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        JSON Rules <span class="text-red-500">*</span>
-                                    </label>
-                                    <textarea name="template_rules" id="template_rules" rows="20" required
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 font-mono text-sm"
-                                        placeholder='{"formatting": {...}, "sections": [...]}'>{{ old('template_rules', json_encode($currentRules, JSON_PRETTY_PRINT)) }}</textarea>
-                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Format JSON untuk struktur
-                                        template dokumen</p>
+                        <div class="mt-4">
+                            <a href="{{ route('admin.templates.builder', $template) }}"
+                                class="inline-flex items-center space-x-2 px-5 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
+                                <i class="fas fa-tools"></i>
+                                <span>Buka Template Builder</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+
+                        <!-- Hidden field untuk template_rules -->
+                        <input type="hidden" name="template_rules" value="{{ $template->template_rules }}">
+                    </div>
+                </div>
+
+                <!-- Status & Options -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-orange-600 to-orange-700 px-6 py-4">
+                        <h3 class="text-lg font-bold text-white flex items-center">
+                            <i class="fas fa-toggle-on mr-2"></i>Status & Opsi
+                        </h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <!-- Active Status -->
+                        <label class="flex items-start space-x-3 cursor-pointer">
+                            <input type="checkbox" name="is_active" value="1"
+                                {{ old('is_active', $template->is_active) ? 'checked' : '' }}
+                                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 mt-0.5">
+                            <div>
+                                <span class="text-sm font-semibold text-gray-700">Aktifkan Template</span>
+                                <p class="text-xs text-gray-500">Template aktif dapat digunakan oleh mahasiswa</p>
+                            </div>
+                        </label>
+
+                        <!-- Regenerate Option -->
+                        <div class="pt-4 border-t border-gray-100">
+                            <label class="flex items-start space-x-3 cursor-pointer">
+                                <input type="checkbox" name="regenerate" value="1"
+                                    class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 focus:ring-purple-500 mt-0.5">
+                                <div>
+                                    <span class="text-sm font-semibold text-gray-700">Regenerate Dokumen
+                                        Template</span>
+                                    <p class="text-xs text-gray-500">Buat ulang file .docx template dengan aturan
+                                        terbaru</p>
                                 </div>
+                            </label>
+                        </div>
 
-                                <!-- JSON Validation -->
-                                <div id="json-validation" class="hidden">
-                                    <div class="rounded-md p-4">
-                                        <div class="flex">
-                                            <div class="flex-shrink-0">
-                                                <svg id="json-icon" class="h-5 w-5" fill="currentColor"
-                                                    viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </div>
-                                            <div class="ml-3">
-                                                <p id="json-message" class="text-sm font-medium"></p>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                            <div class="flex items-start">
+                                <i class="fas fa-exclamation-triangle text-yellow-600 mr-3 mt-0.5"></i>
+                                <div>
+                                    <p class="text-sm text-yellow-800">
+                                        <strong>Penting:</strong> Jika Anda mengubah informasi fakultas atau program
+                                        studi,
+                                        pastikan untuk regenerate dokumen template agar perubahan diterapkan.
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Sidebar -->
-                    <div class="space-y-6">
-                        <!-- Template Info -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Info Template</h3>
-
-                                <div class="space-y-3 text-sm">
-                                    <div>
-                                        <span class="text-gray-500 dark:text-gray-400">ID:</span>
-                                        <span class="text-gray-900 dark:text-white ml-2">{{ $template->id }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500 dark:text-gray-400">Dibuat:</span>
-                                        <span
-                                            class="text-gray-900 dark:text-white ml-2">{{ $template->created_at->format('d M Y H:i') }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500 dark:text-gray-400">Diupdate:</span>
-                                        <span
-                                            class="text-gray-900 dark:text-white ml-2">{{ $template->updated_at->format('d M Y H:i') }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500 dark:text-gray-400">Total Download:</span>
-                                        <span
-                                            class="text-gray-900 dark:text-white ml-2">{{ $template->download_count }}x</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Reference -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📖 Panduan Singkat
-                                </h3>
-
-                                <div class="space-y-3 text-sm">
-                                    <div>
-                                        <h4 class="font-medium text-gray-900 dark:text-white">Element Types:</h4>
-                                        <ul class="mt-1 text-gray-600 dark:text-gray-400 space-y-1">
-                                            <li>• <code>heading</code> - Judul/heading</li>
-                                            <li>• <code>paragraph</code> - Paragraf teks</li>
-                                            <li>• <code>list</code> - Bullet/numbered list</li>
-                                            <li>• <code>table</code> - Tabel</li>
-                                            <li>• <code>image</code> - Gambar</li>
-                                            <li>• <code>page_break</code> - Page break</li>
-                                            <li>• <code>text_break</code> - Line break</li>
-                                            <li>• <code>line</code> - Horizontal line</li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <a href="#"
-                                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
-                                        📚 Lihat Dokumentasi Lengkap
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Status & Options -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Status & Opsi</h3>
-
-                                <div class="space-y-4">
-                                    <div class="flex items-center">
-                                        <input type="checkbox" name="is_active" id="is_active" value="1"
-                                            {{ old('is_active', $template->is_active) ? 'checked' : '' }}
-                                            class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800">
-                                        <label for="is_active"
-                                            class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                                            Template aktif
-                                        </label>
-                                    </div>
-
-                                    <div class="flex items-center">
-                                        <input type="checkbox" name="regenerate" id="regenerate" value="1"
-                                            {{ old('regenerate') ? 'checked' : '' }}
-                                            class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800">
-                                        <label for="regenerate"
-                                            class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                                            Generate ulang dokumen
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                    Dokumen akan di-generate ulang jika rules berubah atau checkbox dicentang
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Submit Actions -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6">
-                                <div class="space-y-3">
-                                    <button type="submit"
-                                        class="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 dark:bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:bg-indigo-700 dark:focus:bg-indigo-600 active:bg-indigo-900 dark:active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                        Update Template
-                                    </button>
-
-                                    <a href="{{ route('admin.templates.show', $template) }}"
-                                        class="w-full inline-flex justify-center items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                        Batal
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Actions -->
+                <div
+                    class="flex items-center justify-between space-x-4 sticky bottom-6 bg-white p-4 rounded-xl shadow-lg border border-gray-200">
+                    <a href="{{ route('admin.templates.show', $template) }}"
+                        class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
+                        <i class="fas fa-times mr-2"></i>Batal
+                    </a>
+                    <div class="flex items-center space-x-3">
+                        <button type="button" onclick="confirmSave()"
+                            class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
+                            <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                        </button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Save Confirmation Modal -->
+    <div id="saveModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4"
+        style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all">
+            <div class="p-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-save text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Simpan Perubahan?</h3>
+                <p class="text-gray-600 text-center mb-6">Pastikan semua data sudah benar sebelum menyimpan.</p>
+                <div class="flex space-x-3">
+                    <button onclick="closeSaveModal()"
+                        class="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
+                        Periksa Lagi
+                    </button>
+                    <button onclick="submitForm()"
+                        class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
+                        <i class="fas fa-check mr-2"></i>Ya, Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
         <script>
-            // Sample rules data
-            const sampleRules = @json(\App\Services\TemplateGeneratorService::getSampleRules());
-
-            // Load sample rules
-            function loadSampleRules() {
-                if (confirm('Ini akan mengganti rules yang ada. Lanjutkan?')) {
-                    document.getElementById('template_rules').value = JSON.stringify(sampleRules, null, 2);
-                    validateJSON();
-                }
-            }
-
-            // Format JSON
-            function formatJSON() {
-                const textarea = document.getElementById('template_rules');
-                try {
-                    const json = JSON.parse(textarea.value);
-                    textarea.value = JSON.stringify(json, null, 2);
-                    validateJSON();
-                } catch (e) {
-                    alert('JSON tidak valid, tidak bisa diformat: ' + e.message);
-                }
-            }
-
-            // Faculty-Prodi Dynamic Loading (AJAX)
-            const prodiLoading = document.getElementById('prodi-loading');
-
-            facultySelect.addEventListener('change', function() {
+            // Faculty change handler
+            document.getElementById('faculty_id').addEventListener('change', function() {
                 const facultyId = this.value;
+                const programStudySelect = document.getElementById('program_study_id');
 
-                // Reset prodi
-                prodiSelect.innerHTML = '<option value="">-- Semua Program Studi (Template Umum) --</option>';
-                prodiSelect.disabled = true;
+                // Show all options first
+                const options = programStudySelect.querySelectorAll('option');
+                options.forEach(option => {
+                    if (option.value === '') {
+                        option.style.display = 'block';
+                        return;
+                    }
 
-                if (facultyId) {
-                    // Show loading
-                    prodiLoading.classList.remove('hidden');
+                    const optionFaculty = option.getAttribute('data-faculty');
+                    if (facultyId && optionFaculty !== facultyId) {
+                        option.style.display = 'none';
+                        if (option.selected) {
+                            programStudySelect.value = '';
+                        }
+                    } else {
+                        option.style.display = 'block';
+                    }
+                });
 
-                    // Fetch program studies by faculty
-                    fetch(`/admin/api/program-studies/${facultyId}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            // Hide loading
-                            prodiLoading.classList.add('hidden');
-                            prodiSelect.disabled = false;
-
-                            if (data.length > 0) {
-                                // Add program studies to dropdown
-                                data.forEach(prodi => {
-                                    const option = document.createElement('option');
-                                    option.value = prodi.id;
-                                    option.textContent = prodi.name;
-                                    // Pre-select if this was the original value
-                                    if (prodi.id == {{ $template->program_study_id ?? 'null' }}) {
-                                        option.selected = true;
-                                    }
-                                    prodiSelect.appendChild(option);
-                                });
-                            } else {
-                                // No program studies found
-                                prodiSelect.innerHTML = '<option value="">-- Tidak ada program studi --</option>';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error loading program studies:', error);
-                            prodiLoading.classList.add('hidden');
-                            prodiSelect.disabled = false;
-                            prodiSelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
-                        });
-                } else {
-                    prodiSelect.disabled = true;
-                }
-            });
-
-            // Trigger on load to populate prodi based on selected faculty
-            if (facultySelect.value) {
-                facultySelect.dispatchEvent(new Event('change'));
-            }
-
-            // JSON validation
-            document.getElementById('template_rules').addEventListener('input', validateJSON);
-
-            function validateJSON() {
-                const textarea = document.getElementById('template_rules');
-                const validation = document.getElementById('json-validation');
-                const icon = document.getElementById('json-icon');
-                const message = document.getElementById('json-message');
-
-                if (!textarea.value.trim()) {
-                    validation.classList.add('hidden');
+                // If no faculty selected, load from API
+                if (!facultyId) {
+                    programStudySelect.value = '';
                     return;
                 }
 
-                try {
-                    JSON.parse(textarea.value);
-                    validation.classList.remove('hidden');
-                    validation.className =
-                        'bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-700 rounded-md p-4';
-                    icon.className = 'h-5 w-5 text-green-400';
-                    message.className = 'text-sm font-medium text-green-800 dark:text-green-300';
-                    message.textContent = '✓ JSON valid';
-                } catch (e) {
-                    validation.classList.remove('hidden');
-                    validation.className =
-                        'bg-red-50 dark:bg-red-900/20 border border-red-400 dark:border-red-700 rounded-md p-4';
-                    icon.className = 'h-5 w-5 text-red-400';
-                    message.className = 'text-sm font-medium text-red-800 dark:text-red-300';
-                    message.textContent = '✗ JSON error: ' + e.message;
-                }
+                // Load fresh data from API
+                fetch(`/api/program-studies/${facultyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const currentValue = programStudySelect.value;
+                        programStudySelect.innerHTML = '<option value="">Pilih Program Studi (Opsional)</option>';
+
+                        data.forEach(program => {
+                            const option = document.createElement('option');
+                            option.value = program.id;
+                            option.textContent = program.name;
+                            option.setAttribute('data-faculty', facultyId);
+                            if (currentValue == program.id) {
+                                option.selected = true;
+                            }
+                            programStudySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+            // Trigger on page load if faculty is selected
+            if (document.getElementById('faculty_id').value) {
+                document.getElementById('faculty_id').dispatchEvent(new Event('change'));
             }
 
-            // Initialize on page load
-            document.addEventListener('DOMContentLoaded', function() {
-                // Trigger faculty change to filter prodi on page load
-                if (document.getElementById('faculty_id').value) {
-                    document.getElementById('faculty_id').dispatchEvent(new Event('change'));
-                }
+            function confirmSave() {
+                document.getElementById('saveModal').style.display = 'flex';
+            }
 
-                // Validate JSON on load
-                validateJSON();
+            function closeSaveModal() {
+                document.getElementById('saveModal').style.display = 'none';
+            }
+
+            function submitForm() {
+                document.querySelector('form').submit();
+            }
+
+            // Close modal on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeSaveModal();
+                }
+            });
+
+            // Close modal on outside click
+            document.getElementById('saveModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSaveModal();
+                }
             });
         </script>
     @endpush

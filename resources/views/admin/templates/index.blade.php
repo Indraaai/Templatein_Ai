@@ -1,138 +1,117 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Manajemen Template') }}
-            </h2>
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">
+                    <i class="fas fa-file-alt text-blue-600 mr-3"></i>Manajemen Template
+                </h2>
+                <p class="text-gray-600 mt-1">Kelola template dokumen akademik untuk mahasiswa</p>
+            </div>
             <a href="{{ route('admin.templates.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-indigo-600 dark:bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:bg-indigo-700 dark:focus:bg-indigo-600 active:bg-indigo-900 dark:active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Tambah Template
+                class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2">
+                <i class="fas fa-plus"></i>
+                <span>Buat Template Baru</span>
             </a>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Success Message -->
-            @if (session('success'))
-                <div class="mb-4 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 px-4 py-3 rounded relative"
-                    role="alert">
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-            @endif
-
-            <!-- Warning Message -->
-            @if (session('warning'))
-                <div class="mb-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-400 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300 px-4 py-3 rounded relative"
-                    role="alert">
-                    <span class="block sm:inline">{{ session('warning') }}</span>
-                </div>
-            @endif
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <!-- Total Templates -->
+                <div
+                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
                     <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
-                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                    </path>
-                                </svg>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">Total Template</p>
+                                <p class="text-3xl font-bold text-gray-900">{{ $stats['total'] }}</p>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Template</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['total'] }}
-                                </p>
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-file-alt text-white text-xl"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <!-- Active Templates -->
+                <div
+                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
                     <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
-                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">Template Aktif</p>
+                                <p class="text-3xl font-bold text-green-600">{{ $stats['active'] }}</p>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Aktif</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['active'] }}
-                                </p>
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-check-circle text-white text-xl"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <!-- Inactive Templates -->
+                <div
+                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
                     <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-gray-500 rounded-md p-3">
-                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
-                                    </path>
-                                </svg>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">Template Nonaktif</p>
+                                <p class="text-3xl font-bold text-gray-600">{{ $stats['inactive'] }}</p>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Nonaktif</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['inactive'] }}
-                                </p>
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-pause-circle text-white text-xl"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <!-- Total Downloads -->
+                <div
+                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
                     <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
-                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                </svg>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">Total Unduhan</p>
+                                <p class="text-3xl font-bold text-purple-600">{{ number_format($stats['downloads']) }}
+                                </p>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Download</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">
-                                    {{ $stats['downloads'] }}</p>
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-download text-white text-xl"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Filters -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
+            <!-- Filters & Search -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
                 <div class="p-6">
                     <form method="GET" action="{{ route('admin.templates.index') }}" class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <!-- Search -->
-                            <div>
-                                <label for="search"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cari</label>
-                                <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                    placeholder="Nama atau deskripsi..."
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-search mr-1"></i>Cari Template
+                                </label>
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    placeholder="Cari nama atau deskripsi..."
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                             </div>
 
                             <!-- Faculty Filter -->
                             <div>
-                                <label for="faculty_id"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fakultas</label>
-                                <select name="faculty_id" id="faculty_id"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-building mr-1"></i>Fakultas
+                                </label>
+                                <select name="faculty_id" id="facultyFilter"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                                     <option value="">Semua Fakultas</option>
                                     @foreach ($faculties as $faculty)
                                         <option value="{{ $faculty->id }}"
@@ -145,10 +124,11 @@
 
                             <!-- Type Filter -->
                             <div>
-                                <label for="type"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipe</label>
-                                <select name="type" id="type"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-tag mr-1"></i>Tipe Dokumen
+                                </label>
+                                <select name="type"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                                     <option value="">Semua Tipe</option>
                                     <option value="skripsi" {{ request('type') == 'skripsi' ? 'selected' : '' }}>
                                         Skripsi</option>
@@ -168,10 +148,11 @@
 
                             <!-- Status Filter -->
                             <div>
-                                <label for="is_active"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
-                                <select name="is_active" id="is_active"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-toggle-on mr-1"></i>Status
+                                </label>
+                                <select name="is_active"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                                     <option value="">Semua Status</option>
                                     <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>Aktif
                                     </option>
@@ -179,210 +160,232 @@
                                         Nonaktif</option>
                                 </select>
                             </div>
+                        </div>
 
-                            <!-- Action Buttons -->
-                            <div class="flex items-end space-x-2">
-                                <button type="submit"
-                                    class="flex-1 inline-flex justify-center items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                    Filter
-                                </button>
-                                <a href="{{ route('admin.templates.index') }}"
-                                    class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                    Reset
-                                </a>
-                            </div>
+                        <div class="flex items-center space-x-3">
+                            <button type="submit"
+                                class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center space-x-2">
+                                <i class="fas fa-filter"></i>
+                                <span>Terapkan Filter</span>
+                            </button>
+                            <a href="{{ route('admin.templates.index') }}"
+                                class="bg-gray-100 text-gray-700 px-6 py-2.5 rounded-lg hover:bg-gray-200 transition-all duration-200 flex items-center space-x-2">
+                                <i class="fas fa-redo"></i>
+                                <span>Reset</span>
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Templates List -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    @if ($templates->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-900">
-                                    <tr>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                            Template</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                            Tipe</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                            Fakultas</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                            Prodi</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                            Status</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                            Download</th>
-                                        <th
-                                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                            Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    @foreach ($templates as $template)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                            <td class="px-6 py-4">
-                                                <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                                    {{ $template->name }}</div>
-                                                @if ($template->description)
-                                                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                        {{ Str::limit($template->description, 50) }}</div>
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    @if ($template->type == 'skripsi') bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300
-                                                    @elseif($template->type == 'proposal') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300
-                                                    @elseif($template->type == 'tugas_akhir') bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300
-                                                    @elseif($template->type == 'laporan_praktikum') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
-                                                    @elseif($template->type == 'makalah') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300
-                                                    @else bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300 @endif">
-                                                    {{ ucfirst(str_replace('_', ' ', $template->type)) }}
-                                                </span>
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                {{ $template->faculty->name ?? '-' }}
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                {{ $template->programStudy->name ?? 'Semua Prodi' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <form action="{{ route('admin.templates.toggle-active', $template) }}"
-                                                    method="POST" class="inline">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                        {{ $template->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }}">
-                                                        {{ $template->is_active ? 'Aktif' : 'Nonaktif' }}
-                                                    </button>
-                                                </form>
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                {{ $template->download_count }}x
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('admin.templates.show', $template) }}"
-                                                        class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
-                                                        title="Detail">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z">
-                                                            </path>
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                                            </path>
-                                                        </svg>
-                                                    </a>
-                                                    <a href="{{ route('admin.templates.edit', $template) }}"
-                                                        class="text-yellow-600 dark:text-yellow-400 hover:text-yellow-900 dark:hover:text-yellow-300"
-                                                        title="Edit">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                                            </path>
-                                                        </svg>
-                                                    </a>
-                                                    <a href="{{ route('admin.templates.download', $template) }}"
-                                                        class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300"
-                                                        title="Download">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
-                                                            </path>
-                                                        </svg>
-                                                    </a>
-                                                    <form
-                                                        action="{{ route('admin.templates.regenerate', $template) }}"
-                                                        method="POST" class="inline"
-                                                        onsubmit="return confirm('Generate ulang dokumen template ini?');">
-                                                        @csrf
-                                                        <button type="submit"
-                                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
-                                                            title="Regenerate">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                                                                </path>
-                                                            </svg>
-                                                        </button>
-                                                    </form>
-                                                    <form action="{{ route('admin.templates.destroy', $template) }}"
-                                                        method="POST" class="inline"
-                                                        onsubmit="return confirm('Yakin ingin menghapus template ini?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
-                                                            title="Hapus">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                                </path>
-                                                            </svg>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+            @if (session('success'))
+                <div class="bg-green-50 border-l-4 border-green-500 rounded-lg p-4 mb-6 flex items-center">
+                    <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-green-800 font-medium">{{ session('success') }}</p>
+                    </div>
+                </div>
+            @endif
 
-                        <!-- Pagination -->
-                        <div class="mt-4">
-                            {{ $templates->links() }}
-                        </div>
-                    @else
-                        <div class="text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">Tidak ada template</h3>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Mulai dengan membuat template
-                                baru.</p>
-                            <div class="mt-6">
-                                <a href="{{ route('admin.templates.create') }}"
-                                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 4v16m8-8H4"></path>
-                                    </svg>
-                                    Tambah Template
+            @if (session('error'))
+                <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4 mb-6 flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-red-800 font-medium">{{ session('error') }}</p>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Templates Grid -->
+            @if ($templates->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    @foreach ($templates as $template)
+                        <div
+                            class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group">
+                            <!-- Header -->
+                            <div class="p-6 border-b border-gray-100">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex-1">
+                                        <h3
+                                            class="text-lg font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition">
+                                            {{ $template->name }}
+                                        </h3>
+                                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                            <span class="flex items-center">
+                                                <i class="fas fa-building mr-1.5 text-gray-400"></i>
+                                                {{ $template->faculty->name }}
+                                            </span>
+                                        </div>
+                                        @if ($template->programStudy)
+                                            <p class="text-xs text-gray-500 mt-1">
+                                                <i
+                                                    class="fas fa-graduation-cap mr-1"></i>{{ $template->programStudy->name }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        @if ($template->is_active)
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                                <i class="fas fa-check-circle mr-1"></i>Aktif
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">
+                                                <i class="fas fa-pause-circle mr-1"></i>Nonaktif
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Type Badge -->
+                                <div class="mb-3">
+                                    @php
+                                        $typeColors = [
+                                            'skripsi' => 'bg-purple-100 text-purple-700',
+                                            'proposal' => 'bg-blue-100 text-blue-700',
+                                            'tugas_akhir' => 'bg-indigo-100 text-indigo-700',
+                                            'laporan_praktikum' => 'bg-pink-100 text-pink-700',
+                                            'makalah' => 'bg-yellow-100 text-yellow-700',
+                                            'lainnya' => 'bg-gray-100 text-gray-700',
+                                        ];
+                                        $typeLabels = [
+                                            'skripsi' => 'Skripsi',
+                                            'proposal' => 'Proposal',
+                                            'tugas_akhir' => 'Tugas Akhir',
+                                            'laporan_praktikum' => 'Laporan Praktikum',
+                                            'makalah' => 'Makalah',
+                                            'lainnya' => 'Lainnya',
+                                        ];
+                                    @endphp
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium {{ $typeColors[$template->type] ?? 'bg-gray-100 text-gray-700' }}">
+                                        <i
+                                            class="fas fa-tag mr-1.5"></i>{{ $typeLabels[$template->type] ?? ucfirst($template->type) }}
+                                    </span>
+                                </div>
+
+                                <!-- Description -->
+                                @if ($template->description)
+                                    <p class="text-sm text-gray-600 line-clamp-2">{{ $template->description }}</p>
+                                @else
+                                    <p class="text-sm text-gray-400 italic">Tidak ada deskripsi</p>
+                                @endif
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="fas fa-download mr-2 text-blue-500"></i>
+                                        <span
+                                            class="font-semibold">{{ number_format($template->download_count) }}</span>
+                                        <span class="ml-1">unduhan</span>
+                                    </div>
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="fas fa-clock mr-2 text-gray-400"></i>
+                                        <span>{{ $template->updated_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="p-4 bg-white flex items-center space-x-2">
+                                <a href="{{ route('admin.templates.show', $template) }}"
+                                    class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 text-center text-sm font-medium">
+                                    <i class="fas fa-eye mr-1"></i>Lihat
                                 </a>
+                                <a href="{{ route('admin.templates.edit', $template) }}"
+                                    class="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all duration-200 text-center text-sm font-medium">
+                                    <i class="fas fa-edit mr-1"></i>Edit
+                                </a>
+                                <button onclick="deleteTemplate({{ $template->id }})"
+                                    class="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition-all duration-200 text-sm font-medium">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
-                    @endif
+                    @endforeach
+                </div>
+
+                <!-- Pagination -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    {{ $templates->links() }}
+                </div>
+            @else
+                <!-- Empty State -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-file-alt text-gray-400 text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Tidak Ada Template</h3>
+                    <p class="text-gray-600 mb-6">Belum ada template yang dibuat atau tidak ada hasil yang sesuai
+                        dengan filter Anda.</p>
+                    <a href="{{ route('admin.templates.create') }}"
+                        class="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
+                        <i class="fas fa-plus mr-2"></i>Buat Template Pertama
+                    </a>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all">
+            <div class="p-6">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Hapus Template?</h3>
+                <p class="text-gray-600 text-center mb-6">Template yang dihapus tidak dapat dikembalikan. Yakin ingin
+                    melanjutkan?</p>
+                <div class="flex space-x-3">
+                    <button onclick="closeDeleteModal()"
+                        class="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
+                        Batal
+                    </button>
+                    <form id="deleteForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            class="w-full bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-all duration-200 font-medium">
+                            Hapus
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            function deleteTemplate(id) {
+                const modal = document.getElementById('deleteModal');
+                const form = document.getElementById('deleteForm');
+                form.action = `/admin/templates/${id}`;
+                modal.classList.remove('hidden');
+            }
+
+            function closeDeleteModal() {
+                const modal = document.getElementById('deleteModal');
+                modal.classList.add('hidden');
+            }
+
+            // Close modal on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDeleteModal();
+                }
+            });
+
+            // Close modal on outside click
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeDeleteModal();
+                }
+            });
+        </script>
+    @endpush
 </x-app-layout>

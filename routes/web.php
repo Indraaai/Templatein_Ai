@@ -13,7 +13,7 @@ Route::get('/', function () {
 // Original dashboard route (redirect berdasarkan role)
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    if ($user->role === 'admin') {
+    if ($user && $user->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('student.dashboard');
@@ -29,6 +29,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->grou
 
     // Template Management
     Route::resource('templates', \App\Http\Controllers\Admin\TemplateController::class);
+    Route::get('templates/{template}/builder', [\App\Http\Controllers\Admin\TemplateController::class, 'builder'])->name('templates.builder');
+    Route::post('templates/{template}/save-builder', [\App\Http\Controllers\Admin\TemplateController::class, 'saveBuilder'])->name('templates.save-builder');
     Route::post('templates/{template}/toggle-active', [\App\Http\Controllers\Admin\TemplateController::class, 'toggleActive'])->name('templates.toggle-active');
     Route::post('templates/{template}/regenerate', [\App\Http\Controllers\Admin\TemplateController::class, 'regenerate'])->name('templates.regenerate');
     Route::get('templates/{template}/download', [\App\Http\Controllers\Admin\TemplateController::class, 'download'])->name('templates.download');

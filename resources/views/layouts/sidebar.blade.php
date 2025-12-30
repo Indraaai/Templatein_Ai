@@ -174,3 +174,6 @@
         </main>
     </div>
 </div>
+
+<!-- Scripts Stack -->
+@stack('scripts')
