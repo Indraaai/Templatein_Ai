@@ -1,0 +1,245 @@
+/* Template Builder Custom Styles */
+
+/* Section Card Animations */
+#sectionsContainer > div {
+    transition: all 0.2s ease-in-out;
+}
+
+#sectionsContainer > div:hover {
+    transform: translateY(-2px);
+}
+
+/* Drag Handle Cursor */
+.drag-handle {
+    cursor: move;
+    cursor: grab;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Badge Hover Effects */
+.section-edit,
+.section-duplicate,
+.section-delete {
+    transition: all 0.15s ease;
+}
+
+.section-edit:hover {
+    transform: scale(1.1);
+}
+
+.section-duplicate:hover {
+    transform: scale(1.1);
+}
+
+.section-delete:hover {
+    transform: scale(1.1);
+}
+
+/* Form Transitions */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Animations */
+button {
+    transition: all 0.2s ease;
+}
+
+button:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+button:not(:disabled):active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Alert Container */
+#alertContainer {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 50;
+    max-width: 500px;
+}
+
+#alertContainer > div {
+    animation: slideInRight 0.3s ease-out;
+    margin-bottom: 10px;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Sortable Ghost */
+.sortable-ghost {
+    opacity: 0.5;
+    background: #e0e7ff;
+    border: 2px dashed #7c3aed;
+}
+
+/* Loading Spinner */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Checkbox & Radio Improvements */
+input[type="checkbox"],
+input[type="radio"] {
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+input[type="checkbox"]:hover,
+input[type="radio"]:hover {
+    transform: scale(1.1);
+}
+
+/* Section Number Badge */
+.drag-handle {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient Headers */
+.bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    #alertContainer {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* Empty State */
+#sectionsContainer .text-gray-400 {
+    user-select: none;
+}
+
+/* Form Section Backgrounds */
+.bg-gray-50 {
+    transition: background-color 0.2s ease;
+}
+
+.bg-gray-50:hover {
+    background-color: #f9fafb;
+}
+
+/* Success State */
+.border-green-500 {
+    animation: successPulse 0.5s ease;
+}
+
+@keyframes successPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+/* Error State */
+.border-red-500 {
+    animation: errorShake 0.5s ease;
+}
+
+@keyframes errorShake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* Tooltip Enhancement */
+[title] {
+    position: relative;
+}
+
+/* Icon Improvements */
+.fas,
+.far,
+.fab {
+    transition: all 0.15s ease;
+}
+
+button:hover .fas,
+button:hover .far,
+button:hover .fab {
+    transform: scale(1.1);
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus Visible */
+*:focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    #alertContainer,
+    button,
+    .no-print {
+        display: none !important;
+    }
+}

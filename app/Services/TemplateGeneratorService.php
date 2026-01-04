@@ -10,12 +10,21 @@ use PhpOffice\PhpWord\SimpleType\Jc;
 use PhpOffice\PhpWord\Shared\Converter;
 use App\Models\Template;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class TemplateGeneratorService
 {
     protected PhpWord $phpWord;
     protected $section;
     protected $template;
+    protected TemplateRulesParser $parser;
+    protected HtmlToWordConverter $htmlConverter;
+
+    public function __construct(TemplateRulesParser $parser, HtmlToWordConverter $htmlConverter)
+    {
+        $this->parser = $parser;
+        $this->htmlConverter = $htmlConverter;
+    }
 
     /**
      * Generate Word document from template rules
@@ -26,7 +35,20 @@ class TemplateGeneratorService
         $this->phpWord = new PhpWord();
 
         // Parse rules from JSON
-        $rules = $this->parseRules($template->template_rules);
+        $frontendRules = $this->parseRules($template->template_rules);
+
+        // Validate rules structure
+        $validation = $this->parser->validate($frontendRules);
+        if (!$validation['valid']) {
+            Log::warning('Invalid template rules', [
+                'template_id' => $template->id,
+                'errors' => $validation['errors']
+            ]);
+            throw new \InvalidArgumentException('Invalid template rules: ' . implode(', ', $validation['errors']));
+        }
+
+        // Convert frontend structure to generator-compatible format
+        $rules = $this->parser->parse($frontendRules);
 
         // Apply default formatting
         $this->applyDefaultFormatting($rules['formatting'] ?? []);
@@ -77,13 +99,13 @@ class TemplateGeneratorService
     {
         // Create new section with margins
         $formatting = $sectionData['formatting'] ?? [];
-        $margin = $formatting['margin'] ?? [];
+        $margins = $formatting['margins'] ?? [];
 
         $this->section = $this->phpWord->addSection([
-            'marginTop' => Converter::cmToTwip($margin['top'] ?? 3),
-            'marginBottom' => Converter::cmToTwip($margin['bottom'] ?? 3),
-            'marginLeft' => Converter::cmToTwip($margin['left'] ?? 4),
-            'marginRight' => Converter::cmToTwip($margin['right'] ?? 3),
+            'marginTop' => Converter::cmToTwip($margins['top'] ?? 3),
+            'marginBottom' => Converter::cmToTwip($margins['bottom'] ?? 3),
+            'marginLeft' => Converter::cmToTwip($margins['left'] ?? 4),
+            'marginRight' => Converter::cmToTwip($margins['right'] ?? 3),
             'orientation' => $formatting['orientation'] ?? 'portrait',
         ]);
 
@@ -106,6 +128,9 @@ class TemplateGeneratorService
                 break;
             case 'paragraph':
                 $this->addParagraph($element);
+                break;
+            case 'html_content':
+                $this->addHtmlContent($element);
                 break;
             case 'list':
                 $this->addList($element);
@@ -140,8 +165,10 @@ class TemplateGeneratorService
         $text = $element['text'] ?? '';
         $style = $element['style'] ?? [];
 
-        // Determine heading style name
-        $styleName = 'Heading' . $level;
+        // Apply uppercase if needed
+        if ($style['uppercase'] ?? false) {
+            $text = mb_strtoupper($text, 'UTF-8');
+        }
 
         // Custom font style for heading
         $fontStyle = [
@@ -154,11 +181,44 @@ class TemplateGeneratorService
         // Paragraph style
         $paragraphStyle = [
             'alignment' => $this->getAlignment($style['alignment'] ?? 'left'),
-            'spaceBefore' => Converter::pointToTwip($style['space_before'] ?? 240),
-            'spaceAfter' => Converter::pointToTwip($style['space_after'] ?? 120),
+            'spaceBefore' => $style['space_before'] ?? 240,
+            'spaceAfter' => $style['space_after'] ?? 120,
         ];
 
         $this->section->addText($text, $fontStyle, $paragraphStyle);
+    }
+
+    /**
+     * Add HTML content from Quill editor
+     */
+    protected function addHtmlContent(array $element): void
+    {
+        $html = $element['html'] ?? '';
+
+        if (empty(trim($html))) {
+            return;
+        }
+
+        // Get default styles
+        $defaultFont = [
+            'name' => 'Times New Roman',
+            'size' => 12,
+        ];
+
+        $defaultParagraph = [
+            'alignment' => Jc::BOTH,
+            'indentation' => [
+                'firstLine' => Converter::cmToTwip(1.25),
+            ],
+        ];
+
+        // Convert HTML to Word elements
+        $this->htmlConverter->convertAndAdd(
+            $this->section,
+            $html,
+            $defaultFont,
+            $defaultParagraph
+        );
     }
 
     /**
@@ -321,8 +381,8 @@ class TemplateGeneratorService
         $filename = 'template_' . $this->template->id . '_' . time() . '.docx';
         $path = 'templates' . DIRECTORY_SEPARATOR . $filename;
 
-        // Get full storage path
-        $storagePath = storage_path('app');
+        // Get PUBLIC storage path so files are accessible for download
+        $storagePath = storage_path('app' . DIRECTORY_SEPARATOR . 'public');
         $fullPath = $storagePath . DIRECTORY_SEPARATOR . $path;
 
         // Ensure directory exists
@@ -335,7 +395,7 @@ class TemplateGeneratorService
         $writer = IOFactory::createWriter($this->phpWord, 'Word2007');
         $writer->save($fullPath);
 
-        // Return path with forward slashes for storage
+        // Return path with forward slashes for storage (relative to public disk)
         return str_replace(DIRECTORY_SEPARATOR, '/', $path);
     }
 

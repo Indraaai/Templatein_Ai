@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Builder Module Testing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .test-pass {
+            color: #10b981;
+        }
+
+        .test-fail {
+            color: #ef4444;
+        }
+
+        .test-section {
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 p-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-flask text-blue-600 mr-2"></i>
+                Template Builder Module Test Suite
+            </h1>
+            <p class="text-gray-600">Testing all module functionality for Template Builder refactoring</p>
+        </div>
+
+        <!-- Test Controls -->
+        <div class="bg-white rounded-lg shadow p-4 mb-6">
+            <div class="flex gap-3">
+                <button onclick="runAllTests()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    <i class="fas fa-play mr-2"></i>Run All Tests
+                </button>
+                <button onclick="clearResults()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+                    <i class="fas fa-eraser mr-2"></i>Clear Results
+                </button>
+                <div class="ml-auto flex items-center gap-4">
+                    <span id="passCount" class="text-green-600 font-bold">Passed: 0</span>
+                    <span id="failCount" class="text-red-600 font-bold">Failed: 0</span>
+                    <span id="totalCount" class="text-gray-600 font-bold">Total: 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Results Container -->
+        <div id="testResults" class="space-y-4"></div>
+
+        <!-- Section Manager Visual Test Area -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-eye text-purple-600 mr-2"></i>Visual Testing Area
+            </h2>
+
+            <!-- Alert Container for showAlert test -->
+            <div id="alertContainer" class="mb-4"></div>
+
+            <!-- Section Count Display -->
+            <div class="mb-4">
+                <span class="text-sm font-semibold text-gray-700">Section Count: </span>
+                <span id="sectionCount" class="text-blue-600 font-bold">0 Bagian</span>
+            </div>
+
+            <!-- Sections Container for render test -->
+            <div id="sectionsContainer" class="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-[200px]">
+                <!-- Sections will be rendered here -->
+            </div>
+
+            <!-- Visual Test Controls -->
+            <div class="mt-4 flex gap-2">
+                <button onclick="testSectionManagerRender()"
+                    class="bg-purple-600 text-white px-3 py-2 rounded text-sm hover:bg-purple-700">
+                    <i class="fas fa-paint-brush mr-1"></i>Test Render
+                </button>
+                <button onclick="testAddSection()"
+                    class="bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700">
+                    <i class="fas fa-plus mr-1"></i>Add Test Section
+                </button>
+                <button onclick="testShowAlert()"
+                    class="bg-yellow-600 text-white px-3 py-2 rounded text-sm hover:bg-yellow-700">
+                    <i class="fas fa-bell mr-1"></i>Test Alert
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the compiled modules -->
+    <script type="module">
+        import { TemplateBuilder } from './build/assets/app-p6sOD0vp.js';
+        import { SectionManager } from './build/assets/app-p6sOD0vp.js';
+
+        // Make available globally for testing
+        window.TemplateBuilder = TemplateBuilder;
+        window.SectionManager = SectionManager;
+
+        console.log('✅ Modules loaded for testing');
+    </script>
+
+    <script>
+        // Test Results Tracking
+        let testsPassed = 0;
+        let testsFailed = 0;
+        let testsTotal = 0;
+
+        // Test Helper Functions
+        function assert(condition, testName, message) {
+            testsTotal++;
+            const result = {
+                passed: condition,
+                testName: testName,
+                message: message,
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            if (condition) {
+                testsPassed++;
+                logTestResult(result);
+                return true;
+            } else {
+                testsFailed++;
+                logTestResult(result);
+                return false;
+            }
+        }
+
+        function logTestResult(result) {
+            const container = document.getElementById('testResults');
+            const testDiv = document.createElement('div');
+            testDiv.className = `test-section bg-white rounded-lg shadow p-4 ${result.passed ? 'border-l-green-500' : 'border-l-red-500'}`;
+
+            const icon = result.passed ?
+                '<i class="fas fa-check-circle text-green-600"></i>' :
+                '<i class="fas fa-times-circle text-red-600"></i>';
+
+            const statusClass = result.passed ? 'test-pass' : 'test-fail';
+
+            testDiv.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="text-2xl">${icon}</div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold ${statusClass}">${result.testName}</h3>
+                            <span class="text-xs text-gray-500">${result.timestamp}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">${result.message}</p>
+                        <span class="text-xs font-semibold ${statusClass}">
+                            ${result.passed ? 'PASSED' : 'FAILED'}
+                        </span>
+                    </div>
+                </div>
+            `;
+
+            container.insertBefore(testDiv, container.firstChild);
+            updateCounts();
+        }
+
+        function updateCounts() {
+            document.getElementById('passCount').textContent = `Passed: ${testsPassed}`;
+            document.getElementById('failCount').textContent = `Failed: ${testsFailed}`;
+            document.getElementById('totalCount').textContent = `Total: ${testsTotal}`;
+        }
+
+        function clearResults() {
+            document.getElementById('testResults').innerHTML = '';
+            testsPassed = 0;
+            testsFailed = 0;
+            testsTotal = 0;
+            updateCounts();
+        }
+
+        // ==================== MODULE AVAILABILITY TESTS ====================
+
+        function testModulesLoaded() {
+            assert(
+                typeof window.TemplateBuilder !== 'undefined',
+                'Module Load - TemplateBuilder',
+                'TemplateBuilder class should be available globally'
+            );
+
+            assert(
+                typeof window.SectionManager !== 'undefined',
+                'Module Load - SectionManager',
+                'SectionManager class should be available globally'
+            );
+
+            assert(
+                typeof window.TemplateBuilderUtils !== 'undefined',
+                'Module Load - TemplateBuilderUtils',
+                'TemplateBuilderUtils should be available globally'
+            );
+        }
+
+        // ==================== SECTION MANAGER TESTS ====================
+
+        function testSectionManagerCreation() {
+            try {
+                const manager = new window.SectionManager();
+                assert(
+                    manager !== null && typeof manager === 'object',
+                    'SectionManager - Instance Creation',
+                    'Should create SectionManager instance successfully'
+                );
+
+                assert(
+                    typeof manager.getAllSections === 'function',
+                    'SectionManager - Has getAllSections method',
+                    'Instance should have getAllSections method'
+                );
+
+                assert(
+                    Array.isArray(manager.getAllSections()),
+                    'SectionManager - Initial sections is array',
+                    'Initial sections should be empty array'
+                );
+
+                window.testManager = manager;
+            } catch (error) {
+                assert(false, 'SectionManager - Instance Creation', `Error: ${error.message}`);
+            }
+        }
+
+        function testSectionManagerAdd() {
+            try {
+                const manager = window.testManager || new window.SectionManager();
+                const initialCount = manager.getAllSections().length;
+
+                manager.saveSection({
+                    title: 'Test Section',
+                    components: {
+                        heading: { bold: true },
+                        content: { enabled: true }
+                    }
+                });
+
+                const newCount = manager.getAllSections().length;
+                assert(
+                    newCount === initialCount + 1,
+                    'SectionManager - Add Section',
+                    `Should add section successfully (${initialCount} → ${newCount})`
+                );
+
+                const lastSection = manager.getAllSections()[newCount - 1];
+                assert(
+                    lastSection.title === 'Test Section',
+                    'SectionManager - Section Title',
+                    'Added section should have correct title'
+                );
+
+                window.testManager = manager;
+            } catch (error) {
+                assert(false, 'SectionManager - Add Section', `Error: ${error.message}`);
+            }
+        }
+
+        function testSectionManagerDelete() {
+            try {
+                const manager = window.testManager || new window.SectionManager();
+
+                // Add a section first
+                manager.saveSection({ title: 'To Delete' });
+                const beforeCount = manager.getAllSections().length;
+
+                // Delete it
+                manager.deleteSection(beforeCount - 1);
+                const afterCount = manager.getAllSections().length;
+
+                assert(
+                    afterCount === beforeCount - 1,
+                    'SectionManager - Delete Section',
+                    `Should delete section successfully (${beforeCount} → ${afterCount})`
+                );
+            } catch (error) {
+                assert(false, 'SectionManager - Delete Section', `Error: ${error.message}`);
+            }
+        }
+
+        function testSectionManagerMove() {
+            try {
+                const manager = new window.SectionManager();
+
+                // Add two sections
+                manager.saveSection({ title: 'First' });
+                manager.saveSection({ title: 'Second' });
+
+                const sections = manager.getAllSections();
+                const firstTitle = sections[0].title;
+
+                // Move second up
+                manager.moveUp(1);
+
+                const afterMove = manager.getAllSections();
+                assert(
+                    afterMove[0].title !== firstTitle,
+                    'SectionManager - Move Section',
+                    'Should move section up successfully'
+                );
+            } catch (error) {
+                assert(false, 'SectionManager - Move Section', `Error: ${error.message}`);
+            }
+        }
+
+        function testSectionManagerDuplicate() {
+            try {
+                const manager = new window.SectionManager();
+                manager.saveSection({ title: 'Original' });
+
+                const beforeCount = manager.getAllSections().length;
+                manager.duplicateSection(0);
+                const afterCount = manager.getAllSections().length;
+
+                assert(
+                    afterCount === beforeCount + 1,
+                    'SectionManager - Duplicate Section',
+                    `Should duplicate section (${beforeCount} → ${afterCount})`
+                );
+
+                const duplicated = manager.getAllSections()[1];
+                assert(
+                    duplicated.title.includes('Copy'),
+                    'SectionManager - Duplicate Title',
+                    'Duplicated section should have "Copy" in title'
+                );
+            } catch (error) {
+                assert(false, 'SectionManager - Duplicate Section', `Error: ${error.message}`);
+            }
+        }
+
+        function testSectionManagerRender() {
+            try {
+                const manager = new window.SectionManager();
+
+                // Add test sections
+                manager.saveSection({
+                    title: 'Visual Test Section 1',
+                    components: {
+                        heading: { bold: true, uppercase: false },
+                        content: { enabled: true }
+                    }
+                });
+
+                manager.saveSection({
+                    title: 'Visual Test Section 2',
+                    components: {
+                        heading: { bold: true, centered: true },
+                        content: { enabled: true },
+                        subheadings: {
+                            h1: { enabled: true },
+                            h2: { enabled: true }
+                        }
+                    }
+                });
+
+                manager.render();
+
+                const container = document.getElementById('sectionsContainer');
+                assert(
+                    container.children.length > 0,
+                    'SectionManager - Render Sections',
+                    `Should render sections to DOM (${container.children.length} elements)`
+                );
+
+                window.sectionManager = manager;
+            } catch (error) {
+                assert(false, 'SectionManager - Render Sections', `Error: ${error.message}`);
+            }
+        }
+
+        function testSectionManagerExportImport() {
+            try {
+                const manager = new window.SectionManager();
+                manager.saveSection({ title: 'Export Test' });
+
+                const exported = manager.exportToJSON();
+                assert(
+                    typeof exported === 'string' && exported.length > 0,
+                    'SectionManager - Export JSON',
+                    'Should export sections to JSON string'
+                );
+
+                const newManager = new window.SectionManager();
+                const imported = newManager.importFromJSON(exported);
+
+                assert(
+                    imported === true,
+                    'SectionManager - Import JSON',
+                    'Should import sections from JSON'
+                );
+
+                assert(
+                    newManager.getAllSections().length > 0,
+                    'SectionManager - Import Data Integrity',
+                    'Imported sections should be available'
+                );
+            } catch (error) {
+                assert(false, 'SectionManager - Export/Import', `Error: ${error.message}`);
+            }
+        }
+
+        // ==================== TEMPLATE BUILDER TESTS ====================
+
+        function testTemplateBuilderCreation() {
+            try {
+                const builder = new window.TemplateBuilder({
+                    templateId: 1,
+                    csrfToken: 'test-token',
+                    saveUrl: '/test/save',
+                    redirectUrl: '/test/redirect'
+                });
+
+                assert(
+                    builder !== null,
+                    'TemplateBuilder - Instance Creation',
+                    'Should create TemplateBuilder instance'
+                );
+
+                assert(
+                    typeof builder.initContentEditors === 'function',
+                    'TemplateBuilder - Has initContentEditors method',
+                    'Instance should have initContentEditors method'
+                );
+            } catch (error) {
+                assert(false, 'TemplateBuilder - Instance Creation', `Error: ${error.message}`);
+            }
+        }
+
+        // ==================== UTILS TESTS ====================
+
+        function testShowAlert() {
+            try {
+                if (typeof window.TemplateBuilderUtils !== 'undefined' &&
+                    typeof window.TemplateBuilderUtils.showAlert === 'function') {
+
+                    window.TemplateBuilderUtils.showAlert('Test alert message', 'success', false);
+
+                    const container = document.getElementById('alertContainer');
+                    assert(
+                        container.children.length > 0,
+                        'Utils - showAlert Function',
+                        'Should display alert in container'
+                    );
+                } else {
+                    assert(false, 'Utils - showAlert Function', 'showAlert function not available');
+                }
+            } catch (error) {
+                assert(false, 'Utils - showAlert Function', `Error: ${error.message}`);
+            }
+        }
+
+        function testGetSkripsiTemplate() {
+            try {
+                if (typeof window.TemplateBuilderUtils !== 'undefined' &&
+                    typeof window.TemplateBuilderUtils.getSkripsiTemplate === 'function') {
+
+                    const template = window.TemplateBuilderUtils.getSkripsiTemplate();
+
+                    assert(
+                        Array.isArray(template) && template.length > 0,
+                        'Utils - getSkripsiTemplate',
+                        `Should return template array (${template.length} sections)`
+                    );
+                } else {
+                    assert(false, 'Utils - getSkripsiTemplate', 'Function not available');
+                }
+            } catch (error) {
+                assert(false, 'Utils - getSkripsiTemplate', `Error: ${error.message}`);
+            }
+        }
+
+        function testGetProposalTemplate() {
+            try {
+                if (typeof window.TemplateBuilderUtils !== 'undefined' &&
+                    typeof window.TemplateBuilderUtils.getProposalTemplate === 'function') {
+
+                    const template = window.TemplateBuilderUtils.getProposalTemplate();
+
+                    assert(
+                        Array.isArray(template) && template.length > 0,
+                        'Utils - getProposalTemplate',
+                        `Should return template array (${template.length} sections)`
+                    );
+                } else {
+                    assert(false, 'Utils - getProposalTemplate', 'Function not available');
+                }
+            } catch (error) {
+                assert(false, 'Utils - getProposalTemplate', `Error: ${error.message}`);
+            }
+        }
+
+        // ==================== VISUAL TEST HELPERS ====================
+
+        function testAddSection() {
+            if (!window.sectionManager) {
+                window.sectionManager = new window.SectionManager();
+            }
+
+            window.sectionManager.saveSection({
+                title: `Test Section ${window.sectionManager.getAllSections().length + 1}`,
+                components: {
+                    heading: {
+                        bold: Math.random() > 0.5,
+                        uppercase: Math.random() > 0.5
+                    },
+                    content: { enabled: true }
+                }
+            });
+
+            window.sectionManager.render();
+        }
+
+        // ==================== RUN ALL TESTS ====================
+
+        function runAllTests() {
+            clearResults();
+
+            console.log('🧪 Starting test suite...');
+
+            // Module availability tests
+            testModulesLoaded();
+
+            // SectionManager tests
+            testSectionManagerCreation();
+            testSectionManagerAdd();
+            testSectionManagerDelete();
+            testSectionManagerMove();
+            testSectionManagerDuplicate();
+            testSectionManagerRender();
+            testSectionManagerExportImport();
+
+            // TemplateBuilder tests
+            testTemplateBuilderCreation();
+
+            // Utils tests
+            testShowAlert();
+            testGetSkripsiTemplate();
+            testGetProposalTemplate();
+
+            console.log(`✅ Test suite completed: ${testsPassed} passed, ${testsFailed} failed`);
+
+            // Scroll to top to see results
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('🚀 Page loaded, waiting for modules...');
+                // Give modules time to load
+                setTimeout(runAllTests, 1000);
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>

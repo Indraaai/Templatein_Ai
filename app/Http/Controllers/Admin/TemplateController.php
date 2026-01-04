@@ -10,6 +10,7 @@ use App\Services\TemplateGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TemplateController extends Controller
 {
@@ -152,10 +153,8 @@ class TemplateController extends Controller
      */
     public function builder(Template $template)
     {
-        // Parse current rules
-        $currentRules = json_decode($template->template_rules, true);
-
-        return view('admin.templates.builder', compact('template', 'currentRules'));
+        // Use the refactored modular builder view
+        return view('admin.templates.builder', compact('template'));
     }
 
     /**
@@ -163,39 +162,89 @@ class TemplateController extends Controller
      */
     public function saveBuilder(Request $request, Template $template)
     {
+        // Validate basic structure
         $validated = $request->validate([
             'template_rules' => 'required|json',
             'is_active' => 'boolean',
         ]);
 
+        // Decode and validate template rules structure
+        $rules = json_decode($validated['template_rules'], true);
+
+        if (!$rules) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Format JSON tidak valid.'
+            ], 422);
+        }
+
+        // Validate using TemplateRulesParser
+        $parser = app(\App\Services\TemplateRulesParser::class);
+        $validation = $parser->validate($rules);
+
+        if (!$validation['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Struktur template tidak valid.',
+                'errors' => $validation['errors']
+            ], 422);
+        }
+
         DB::beginTransaction();
         try {
-            // Update template rules
+            // Update template rules first
             $template->update([
                 'template_rules' => $validated['template_rules'],
-                'is_active' => $request->boolean('is_active', false),
+                'is_active' => false, // Keep inactive until document generated successfully
             ]);
 
-            // Generate document
-            if ($template->template_file && Storage::exists($template->template_file)) {
-                Storage::delete($template->template_file);
+            // Try to generate document
+            try {
+                // Delete old file if exists
+                if ($template->template_file && Storage::exists($template->template_file)) {
+                    Storage::delete($template->template_file);
+                }
+
+                $filePath = $this->generatorService->generateDocument($template);
+
+                // Update with file and active status
+                $template->update([
+                    'template_file' => $filePath,
+                    'is_active' => $request->boolean('is_active', false),
+                ]);
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Template berhasil disimpan dan dokumen telah digenerate.',
+                    'redirect' => route('admin.templates.show', $template)
+                ]);
+            } catch (\Exception $generateError) {
+                // Document generation failed, but rules are saved
+                Log::error('Template document generation failed', [
+                    'template_id' => $template->id,
+                    'error' => $generateError->getMessage(),
+                    'trace' => $generateError->getTraceAsString()
+                ]);
+
+                DB::commit(); // Commit the rules save
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Template rules tersimpan, tetapi gagal generate dokumen.',
+                    'error_detail' => $generateError->getMessage(),
+                    'saved_rules' => true
+                ], 500);
             }
-
-            $filePath = $this->generatorService->generateDocument($template);
-
-            $template->update([
-                'template_file' => $filePath,
-            ]);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Template berhasil disimpan dan dokumen telah digenerate.',
-                'redirect' => route('admin.templates.show', $template)
-            ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
+            Log::error('Template save failed', [
+                'template_id' => $template->id,
+                'error' => $e->getMessage()
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menyimpan template: ' . $e->getMessage()
@@ -324,16 +373,35 @@ class TemplateController extends Controller
      */
     public function download(Template $template)
     {
-        if (!$template->template_file || !Storage::exists($template->template_file)) {
+        // Validasi: pastikan file ada
+        if (!$template->template_file || !Storage::disk('public')->exists($template->template_file)) {
             return back()->with('error', 'File template tidak ditemukan.');
         }
 
         // Increment download count
-        $template->increment('download_count');
+        $template->incrementDownload();
 
-        $filename = str_replace(' ', '_', $template->name) . '.docx';
+        // Download file
+        $filePath = Storage::disk('public')->path($template->template_file);
+        $fileName = $template->name . '.docx';
 
-        return Storage::download($template->template_file, $filename);
+        return response()->download($filePath, $fileName);
+    }
+
+    /**
+     * Preview template file
+     */
+    public function preview(Template $template)
+    {
+        // Validasi: pastikan file ada
+        if (!$template->template_file || !Storage::disk('public')->exists($template->template_file)) {
+            abort(404, 'File template tidak ditemukan.');
+        }
+
+        // Return file untuk preview di browser
+        return response()->file(
+            Storage::disk('public')->path($template->template_file)
+        );
     }
 
     /**

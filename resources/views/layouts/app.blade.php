@@ -44,6 +44,8 @@
             background: #94a3b8;
         }
     </style>
+
+    @stack('styles')
 </head>
 
 <body class="font-sans antialiased bg-gray-50">

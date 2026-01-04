@@ -74,16 +74,16 @@ class TemplateController extends Controller
         }
 
         // Validasi: pastikan file ada
-        if (!$template->file_path || !Storage::disk('public')->exists($template->file_path)) {
+        if (!$template->template_file || !Storage::disk('public')->exists($template->template_file)) {
             return back()->with('error', 'File template tidak ditemukan.');
         }
 
-        // Increment download count (optional - bisa ditambahkan kolom download_count)
-        // $template->increment('download_count');
+        // Increment download count
+        $template->incrementDownload();
 
         // Download file
-        $filePath = Storage::disk('public')->path($template->file_path);
-        $fileName = $template->original_filename ?? basename($template->file_path);
+        $filePath = Storage::disk('public')->path($template->template_file);
+        $fileName = $template->name . '.docx';
 
         return response()->download($filePath, $fileName);
     }
@@ -109,13 +109,13 @@ class TemplateController extends Controller
         }
 
         // Validasi: pastikan file ada
-        if (!$template->file_path || !Storage::disk('public')->exists($template->file_path)) {
+        if (!$template->template_file || !Storage::disk('public')->exists($template->template_file)) {
             abort(404, 'File template tidak ditemukan.');
         }
 
         // Return file untuk preview di browser
         return response()->file(
-            Storage::disk('public')->path($template->file_path)
+            Storage::disk('public')->path($template->template_file)
         );
     }
 }

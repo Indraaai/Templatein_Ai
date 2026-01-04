@@ -34,6 +34,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->grou
     Route::post('templates/{template}/toggle-active', [\App\Http\Controllers\Admin\TemplateController::class, 'toggleActive'])->name('templates.toggle-active');
     Route::post('templates/{template}/regenerate', [\App\Http\Controllers\Admin\TemplateController::class, 'regenerate'])->name('templates.regenerate');
     Route::get('templates/{template}/download', [\App\Http\Controllers\Admin\TemplateController::class, 'download'])->name('templates.download');
+    Route::get('templates/{template}/preview', [\App\Http\Controllers\Admin\TemplateController::class, 'preview'])->name('templates.preview');
 
     // Student Management
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);

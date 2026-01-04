@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Carbon\Carbon;
+use App\Services\TemplateRulesParser;
+use App\Services\HtmlToWordConverter;
+use App\Services\TemplateGeneratorService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +15,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register Template Builder services
+        $this->app->singleton(TemplateRulesParser::class, function ($app) {
+            return new TemplateRulesParser();
+        });
+
+        $this->app->singleton(HtmlToWordConverter::class, function ($app) {
+            return new HtmlToWordConverter();
+        });
+
+        $this->app->singleton(TemplateGeneratorService::class, function ($app) {
+            return new TemplateGeneratorService(
+                $app->make(TemplateRulesParser::class),
+                $app->make(HtmlToWordConverter::class)
+            );
+        });
     }
 
     /**
