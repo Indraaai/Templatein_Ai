@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Services\StructureExtractor;
 
 class GroqService
 {
@@ -25,6 +26,22 @@ class GroqService
     public function analyzeDocument(string $content, array $templateRules = [], string $templateName = '')
     {
         try {
+            // Limit content length to avoid token limit (roughly 4 chars = 1 token)
+            // Groq limit is 12000 tokens for llama-3.3-70b-versatile
+            // We'll use max 30000 chars (~7500 tokens) to leave room for prompt
+            $maxContentChars = 30000;
+
+            if (strlen($content) > $maxContentChars) {
+                Log::warning('Document content too long, truncating', [
+                    'original_length' => strlen($content),
+                    'truncated_to' => $maxContentChars
+                ]);
+
+                // Take beginning (more important for structure analysis)
+                $content = substr($content, 0, $maxContentChars);
+                $content .= "\n\n[... dokumen dipotong karena terlalu panjang, analisis fokus pada bagian awal ...]";
+            }
+
             $prompt = $this->buildDocumentAnalysisPrompt($content, $templateRules, $templateName);
 
             $response = Http::timeout(config('groq.timeout'))
@@ -88,16 +105,45 @@ DOKUMEN MAHASISWA YANG DIUPLOAD:
 {$content}
 
 ═══════════════════════════════════════════════════
-TUGAS ANDA - FOKUS UTAMA: VALIDASI STRUKTUR TEMPLATE
+TUGAS ANDA - FOKUS UTAMA: VALIDASI STRUKTUR DOKUMEN
 ═══════════════════════════════════════════════════
 
-🎯 PRIORITAS PENGECEKAN:
+⚠️ PENTING: HANYA ANALISIS STRUKTUR, JANGAN BACA ISI KONTEN!
 
-1. KESESUAIAN STRUKTUR DOKUMEN (40% dari total skor):
-   ✓ Apakah semua SECTION yang diwajibkan template ADA?
-   ✓ Apakah urutan section SESUAI template?
-   ✓ Apakah heading/subheading LENGKAP sesuai template?
-   ✓ Apakah numbering system KONSISTEN dengan template?
+🎯 FOKUS PENGECEKAN STRUKTUR (100% skor):
+
+1. BAGIAN AWAL DOKUMEN (30%):
+   ✓ Apakah ada COVER/HALAMAN JUDUL?
+   ✓ Apakah ada LEMBAR PENGESAHAN?
+   ✓ Apakah ada KATA PENGANTAR?
+   ✓ Apakah ada DAFTAR ISI?
+   ✓ Apakah urutan halaman awal SESUAI template?
+
+2. STRUKTUR BAB DAN SUBBAB (50%):
+   ✓ Apakah semua BAB yang diwajibkan ADA? (BAB I, II, III, dst)
+   ✓ Apakah JUDUL BAB sesuai template? (PENDAHULUAN, TINJAUAN PUSTAKA, dll)
+   ✓ Apakah SUBBAB lengkap? (1.1, 1.2, 2.1, 2.2, dst)
+   ✓ Apakah NUMBERING SYSTEM konsisten? (1.1.1, 1.1.2 atau a, b, c)
+   ✓ Apakah HIERARKI heading jelas? (Heading 1, 2, 3)
+
+3. BAGIAN AKHIR DOKUMEN (20%):
+   ✓ Apakah ada BAB PENUTUP/KESIMPULAN?
+   ✓ Apakah ada DAFTAR PUSTAKA?
+   ✓ Apakah ada LAMPIRAN (jika diperlukan)?
+   ✓ Apakah urutan bagian akhir SESUAI template?
+
+CARA ANALISIS:
+- IDENTIFIKASI heading berdasarkan: huruf kapital semua, ukuran font besar, posisi di awal paragraf
+- EKSTRAK semua BAB (contoh: "BAB I", "BAB II", "CHAPTER 1")
+- EKSTRAK semua SUBBAB (contoh: "1.1", "2.1.1", "A.", "a)")
+- HITUNG jumlah bab dan bandingkan dengan template
+- CEK urutan struktur dari awal sampai akhir
+
+JANGAN:
+❌ Membaca isi paragraf/konten
+❌ Menganalisis tata bahasa atau ejaan
+❌ Mengecek kualitas penulisan
+❌ Membaca abstrak atau isi bab secara detail
 
    Contoh yang HARUS ADA (sesuai template):
    - Cover/Halaman Judul
@@ -289,35 +335,64 @@ PROMPT;
     }
 
     /**
-     * Extract text from PDF file
+     * Extract text from PDF file - STRUCTURE ONLY
      */
     public function extractTextFromPdf(string $filePath)
     {
         try {
+            if (!file_exists($filePath)) {
+                Log::error('PDF file not found', ['file' => $filePath]);
+                return null;
+            }
+
+            if (!class_exists('\Smalot\PdfParser\Parser')) {
+                Log::error('PDF Parser class not found. Run: composer require smalot/pdfparser');
+                return null;
+            }
+
             $parser = new \Smalot\PdfParser\Parser();
             $pdf = $parser->parseFile($filePath);
             $text = $pdf->getText();
 
-            // Clean up text
-            $text = preg_replace('/\s+/', ' ', $text);
+            // Extract STRUCTURE only (headings, titles, chapter markers)
+            $text = StructureExtractor::extractStructureOnly($text);
+
+            // Keep structure formatting (don't collapse whitespace here)
+            $text = preg_replace('/\s{3,}/', ' ', $text);
             $text = trim($text);
+
+            if (empty($text)) {
+                Log::warning('PDF extracted but text is empty', ['file' => $filePath]);
+                return null;
+            }
+
+            Log::info('PDF structure extracted', [
+                'file' => basename($filePath),
+                'length' => strlen($text)
+            ]);
 
             return $text;
         } catch (\Exception $e) {
             Log::error('PDF Extraction Error', [
                 'file' => $filePath,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
             return null;
         }
     }
 
     /**
-     * Extract text from DOCX file
+     * Extract text from DOCX file - STRUCTURE ONLY
      */
     public function extractTextFromDocx(string $filePath)
     {
         try {
+            if (!file_exists($filePath)) {
+                Log::error('DOCX file not found', ['file' => $filePath]);
+                return null;
+            }
+
             $zip = new \ZipArchive();
             $text = '';
 
@@ -327,19 +402,38 @@ PROMPT;
                     $dom = new \DOMDocument();
                     $dom->loadXML($xml);
                     $text = $dom->textContent;
+                } else {
+                    Log::warning('Could not find word/document.xml in DOCX', ['file' => $filePath]);
                 }
                 $zip->close();
+            } else {
+                Log::error('Failed to open DOCX as ZIP', ['file' => $filePath]);
+                return null;
             }
 
-            // Clean up text
-            $text = preg_replace('/\s+/', ' ', $text);
+            // Extract STRUCTURE only (headings, titles, chapter markers)
+            $text = StructureExtractor::extractStructureOnly($text);
+
+            // Keep structure formatting (don't collapse whitespace here)
+            $text = preg_replace('/\s{3,}/', ' ', $text);
             $text = trim($text);
+
+            if (empty($text)) {
+                Log::warning('DOCX extracted but text is empty', ['file' => $filePath]);
+                return null;
+            }
+
+            Log::info('DOCX structure extracted', [
+                'file' => basename($filePath),
+                'length' => strlen($text)
+            ]);
 
             return $text;
         } catch (\Exception $e) {
             Log::error('DOCX Extraction Error', [
                 'file' => $filePath,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
             return null;
         }

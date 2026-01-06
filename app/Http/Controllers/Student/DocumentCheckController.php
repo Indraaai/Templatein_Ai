@@ -84,6 +84,19 @@ class DocumentCheckController extends Controller
         try {
             $user = Auth::user();
             $file = $request->file('document');
+
+            // Validate file is uploaded successfully
+            if (!$file || !$file->isValid()) {
+                Log::error('File upload failed - file is invalid', [
+                    'user_id' => $user->id,
+                    'has_file' => !is_null($file),
+                    'file_error' => $file ? $file->getError() : 'No file'
+                ]);
+                return back()
+                    ->withInput()
+                    ->with('error', 'File gagal diupload. Silakan coba lagi atau gunakan file yang berbeda.');
+            }
+
             $template = Template::findOrFail($request->template_id);
 
             // Validasi template sesuai dengan fakultas & prodi mahasiswa
@@ -91,7 +104,23 @@ class DocumentCheckController extends Controller
                 $template->faculty_id !== $user->faculty_id ||
                 $template->program_study_id !== $user->program_study_id
             ) {
-                return back()->with('error', 'Template tidak sesuai dengan fakultas dan program studi Anda.');
+                return back()
+                    ->withInput()
+                    ->with('error', 'Template tidak sesuai dengan fakultas dan program studi Anda.');
+            }
+
+            // Verify storage directory exists and is writable
+            $uploadPath = storage_path('app/public/documents/originals/' . $user->id);
+            if (!file_exists($uploadPath)) {
+                if (!mkdir($uploadPath, 0755, true)) {
+                    Log::error('Failed to create upload directory', [
+                        'path' => $uploadPath,
+                        'user_id' => $user->id
+                    ]);
+                    return back()
+                        ->withInput()
+                        ->with('error', 'Gagal membuat direktori upload. Silakan hubungi administrator.');
+                }
             }
 
             // Generate unique filename
@@ -103,6 +132,28 @@ class DocumentCheckController extends Controller
                 $filename,
                 'public'
             );
+
+            if (!$filePath) {
+                Log::error('File storage failed - storeAs returned false', [
+                    'user_id' => $user->id,
+                    'filename' => $filename,
+                    'original_name' => $file->getClientOriginalName()
+                ]);
+                return back()
+                    ->withInput()
+                    ->with('error', 'Gagal menyimpan file. Silakan coba lagi.');
+            }
+
+            // Verify file was actually stored
+            if (!Storage::disk('public')->exists($filePath)) {
+                Log::error('File not found after storage', [
+                    'user_id' => $user->id,
+                    'file_path' => $filePath
+                ]);
+                return back()
+                    ->withInput()
+                    ->with('error', 'File tidak ditemukan setelah upload. Silakan coba lagi.');
+            }
 
             // Create document check record
             $documentCheck = DocumentCheck::create([
@@ -116,6 +167,13 @@ class DocumentCheckController extends Controller
                 'approval_status' => 'pending',
             ]);
 
+            Log::info('Document uploaded successfully', [
+                'user_id' => $user->id,
+                'document_id' => $documentCheck->id,
+                'file_path' => $filePath,
+                'file_size' => $file->getSize()
+            ]);
+
             // Dispatch AI analysis job (akan kita buat nanti)
             // ProcessDocumentAnalysis::dispatch($documentCheck);
 
@@ -126,9 +184,14 @@ class DocumentCheckController extends Controller
                 ->route('student.documents.show', $documentCheck)
                 ->with('success', 'Dokumen berhasil diupload dan sedang dianalisis oleh AI.');
         } catch (\Exception $e) {
+            Log::error('Document upload exception', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat mengupload dokumen: ' . $e->getMessage());
         }
     }
 
@@ -283,12 +346,24 @@ class DocumentCheckController extends Controller
             $filePath = Storage::disk('public')->path($documentCheck->file_path);
             $template = $documentCheck->template;
 
+            Log::info('Starting AI analysis', [
+                'document_id' => $documentCheck->id,
+                'file_path' => $filePath,
+                'file_type' => $documentCheck->file_type,
+                'file_exists' => file_exists($filePath)
+            ]);
+
             // Extract text from document
             $content = $this->extractTextFromDocument($filePath, $documentCheck->file_type);
 
             if (!$content) {
-                throw new \Exception('Gagal mengekstrak teks dari dokumen.');
+                throw new \Exception('Gagal mengekstrak teks dari dokumen. Pastikan file tidak corrupt dan dapat dibaca.');
             }
+
+            Log::info('Text extracted successfully', [
+                'document_id' => $documentCheck->id,
+                'content_length' => strlen($content)
+            ]);
 
             // Analyze with Groq AI
             $analysisResult = $this->groqService->analyzeDocument(
@@ -298,8 +373,13 @@ class DocumentCheckController extends Controller
             );
 
             if (!$analysisResult) {
-                throw new \Exception('AI gagal menganalisis dokumen.');
+                throw new \Exception('AI gagal menganalisis dokumen. Silakan coba lagi atau hubungi administrator.');
             }
+
+            Log::info('AI analysis completed', [
+                'document_id' => $documentCheck->id,
+                'score' => $analysisResult['overall_score'] ?? 0
+            ]);
 
             // Generate correction suggestions file
             $correctionText = $this->groqService->generateCorrectionSuggestions($analysisResult);
@@ -386,8 +466,8 @@ class DocumentCheckController extends Controller
 
         $output .= "Dokumen      : " . $document->original_filename . "\n";
         $output .= "Template     : " . $document->template->name . "\n";
-        $output .= "Tanggal Check: " . $document->ai_checked_at->format('d F Y, H:i') . "\n";
-        $output .= "Score AI     : " . $document->ai_score . "/100\n";
+        $output .= "Tanggal Check: " . ($document->ai_checked_at ? $document->ai_checked_at->format('d F Y, H:i') : $document->created_at->format('d F Y, H:i')) . "\n";
+        $output .= "Score AI     : " . ($document->ai_score ?? 'N/A') . "\n";
         $output .= "Status       : " . strtoupper($document->approval_status) . "\n\n";
 
         $output .= str_repeat("-", 72) . "\n";
